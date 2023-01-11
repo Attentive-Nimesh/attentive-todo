@@ -1,0 +1,39 @@
+.sidebar-container {
+	transition: all 5s;
+	position: fixed;
+	background-color: #fff;
+	right: 0;
+	top: 0;
+	height: 100vh;
+	width: 70vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	z-index: 100;
+}
+
+.sidebar-container a {
+	color: rgb(18, 31, 49);
+	text-decoration: none;
+}
+
+.sidebar-container ul {
+	flex: 1;
+}
+
+.close-button {
+	margin: 1rem 0;
+	padding: 1rem;
+	border: none;
+	background-color: #fff;
+	color: rgb(18, 31, 49);
+}
+
+@media (min-width: 768px) {
+	.sidebar-container {
+		display: none;
+		width: 0;
+		height: 0;
+	}
+}

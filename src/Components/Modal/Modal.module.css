@@ -1,0 +1,45 @@
+.modal {
+	position: fixed;
+	top: 30%;
+	left: 25%;
+	width: 50vw;
+	background-color: #fff;
+	z-index: 1000;
+	border-radius: 20px;
+	padding: 1rem;
+	animation: slide 300ms ease-in forwards;
+}
+
+.modal h2 {
+	color: rgb(18, 31, 49);
+}
+
+.modal main {
+	padding: 1rem;
+}
+
+.footer {
+	text-align: right;
+}
+
+.footer button:first-of-type {
+	margin-right: 1rem;
+}
+
+@keyframes slide {
+	0% {
+		transform: translateY(-300px);
+	}
+
+	100% {
+		transform: translateY(0);
+	}
+}
+
+@media (max-width: 768px) {
+	.modal {
+		top: 30%;
+		left: 10%;
+		width: 80vw;
+	}
+}

@@ -1,0 +1,24 @@
+.tasks-item {
+	padding: 0.5rem 1rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.tasks-item span:first-of-type {
+	flex: 1;
+}
+
+.task-actions span:first-of-type {
+	display: inline-block;
+	margin-right: 1rem;
+}
+
+.task-actions span:first-of-type:hover {
+	color: greenyellow;
+}
+
+.task-actions span:last-of-type:hover {
+	color: red;
+}

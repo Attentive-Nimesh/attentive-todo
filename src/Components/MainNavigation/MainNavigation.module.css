@@ -1,0 +1,30 @@
+.nav-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1.5rem 2.5rem;
+	background-color: rgb(18, 31, 49);
+}
+
+.nav-container a {
+	color: white;
+	text-decoration: none;
+}
+
+.menu-button {
+	display: none;
+	background-color: rgb(18, 31, 49);
+	color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+	.menu-button {
+		display: block;
+	}
+
+	.nav-container ul {
+		display: none;
+	}
+}
