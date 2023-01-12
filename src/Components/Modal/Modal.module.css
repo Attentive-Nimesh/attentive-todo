@@ -1,6 +1,6 @@
 .modal {
 	position: fixed;
-	top: 30%;
+	top: 15%;
 	left: 25%;
 	width: 50vw;
 	background-color: #fff;
@@ -38,8 +38,8 @@
 
 @media (max-width: 768px) {
 	.modal {
-		top: 30%;
-		left: 10%;
-		width: 80vw;
+		top: 12%;
+		left: 2.25%;
+		width: 95vw;
 	}
 }

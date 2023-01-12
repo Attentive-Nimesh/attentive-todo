@@ -1,10 +1,18 @@
 import { InputLabel, Input, FormControl } from '@mui/material';
 
-const InputBox = ({ label }) => {
+const InputBox = ({ label, onChange, value, noFullWidth, sx, type }) => {
 	return (
-		<FormControl fullWidth>
+		<FormControl
+			fullWidth={noFullWidth ? false : true}
+			sx={sx}
+			variant="standard"
+		>
 			<InputLabel htmlFor={label}>{label}</InputLabel>
-			<Input />
+			<Input
+				onChange={onChange}
+				value={value}
+				type={type ? type : 'text'}
+			/>
 		</FormControl>
 	);
 };

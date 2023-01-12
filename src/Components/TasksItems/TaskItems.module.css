@@ -18,3 +18,7 @@
 .tasks::-webkit-scrollbar-thumb {
 	background-color: #a1a1a1;
 }
+.tasks p {
+	margin-top: 1rem;
+	color: #a1a1a1;
+}

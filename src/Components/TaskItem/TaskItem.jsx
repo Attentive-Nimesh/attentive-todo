@@ -3,30 +3,34 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import classes from './TaskItem.module.css';
 import { useState } from 'react';
 import Modal from '../Modal/Modal';
-import SelectInput from '../SelectInput/SelectInput';
+import TaskForm from '../CreateTaskForm/TaskForm';
 
-const TaskItem = ({ task, status }) => {
+const TaskItem = ({ task, onEdit, onDelete }) => {
 	const [editModal, setEditModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
 
 	const toggleEditModal = () => setEditModal((prev) => !prev);
 	const toggleDeleteModal = () => setDeleteModal((prev) => !prev);
 
+	const saveEditHandler = (editTask) => {
+		onEdit(editTask, task.status);
+		toggleEditModal();
+	};
+
+	const deleteConfirmHandler = () => {
+		onDelete(task);
+		toggleDeleteModal();
+	};
+
 	return (
 		<>
 			{editModal && (
-				<Modal
+				<TaskForm
+					onCreate={saveEditHandler}
 					show={editModal}
-					onClose={toggleEditModal}
-					headerText={'Edit Status'}
-					buttonText="Save Status"
-				>
-					<SelectInput
-						label="Select Status"
-						labelId="edit-select-label"
-						value={status}
-					/>
-				</Modal>
+					onToggle={toggleEditModal}
+					editTask={task}
+				/>
 			)}
 			{deleteModal && (
 				<Modal
@@ -34,12 +38,13 @@ const TaskItem = ({ task, status }) => {
 					onClose={toggleDeleteModal}
 					headerText={'Confirmation'}
 					buttonText="Delete"
+					onClick={deleteConfirmHandler}
 				>
 					<p>Are you sure? you want to delete this task</p>
 				</Modal>
 			)}
 			<li className={classes['tasks-item']}>
-				<span>{task}</span>
+				<span>{task.task}</span>
 				<span className={classes['task-actions']}>
 					<span onClick={toggleEditModal}>
 						<EditIcon />

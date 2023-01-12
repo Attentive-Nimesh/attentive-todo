@@ -1,0 +1,20 @@
+.deleted-task-item {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #a1a1a1;
+	padding: 1rem;
+	font-size: 1.2rem;
+	margin-bottom: 1rem;
+}
+
+.deleted-task-item span {
+	flex: 1;
+}
+
+@media (max-width: 768px) {
+	.deleted-task-item {
+		font-size: 1rem;
+		flex-direction: column;
+	}
+}

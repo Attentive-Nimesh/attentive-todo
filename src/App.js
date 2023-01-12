@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 import MainNavigation from './Components/MainNavigation/MainNavigation';
 import Board from './Pages/Board/Board.pages';
-import DeletedTaks from './Pages/Deleted Tasks/DeletedTaks.pages';
+import DeletedTasks from './Pages/Deleted Tasks/DeletedTasks.pages';
 import ErrorPage from './Pages/ErrorPage/ErrorPage.pages';
 
 const router = createBrowserRouter([
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: 'deleted-tasks',
-				element: <DeletedTaks />,
+				element: <DeletedTasks />,
 			},
 		],
 	},

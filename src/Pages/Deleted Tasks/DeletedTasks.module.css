@@ -1,0 +1,14 @@
+.deleted-tasks-container {
+	padding: 1rem 2rem;
+	text-align: center;
+}
+
+.deleted-tasks-container h2 {
+	color: #504f4f;
+	margin: 2rem 0;
+}
+
+.deleted-tasks-item {
+	padding-left: 0;
+	list-style: none;
+}
