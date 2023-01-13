@@ -5,6 +5,7 @@ import Tasks from '../../Components/Tasks/Tasks';
 import InputBox from '../../Components/Input/InputBox';
 import TaskForm from '../../Components/CreateTaskForm/TaskForm';
 import Toast from '../../Components/Toast/Toast';
+import SelectInput from '../../Components/SelectInput/SelectInput';
 
 const TASKS_STATUS = {
 	TODO: 'Todo',
@@ -15,6 +16,7 @@ const TASKS_STATUS = {
 const Board = () => {
 	const [tasks, setTasks] = useState([]);
 	const [filteredTasks, setFilteredTasks] = useState([]);
+	const [searchFilteredTasks, setSearchFilteredTasks] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [showToast, setShowToast] = useState(false);
 	const [toastMessage, setToastMessage] = useState('');
@@ -31,9 +33,7 @@ const Board = () => {
 		if (tasks_data) {
 			setTasks(tasks_data);
 			setFilteredTasks(tasks_data);
-		} else {
-			setTasks([]);
-			setFilteredTasks([]);
+			setSearchFilteredTasks(tasks_data);
 		}
 	}, []);
 
@@ -51,23 +51,27 @@ const Board = () => {
 	//setting filter as well as filtering tasks using includes function of string
 	const changeFilterHandler = (e) => {
 		setFilter(e.target.value);
-		setFilteredTasks(
-			tasks.filter((task) =>
-				task.assignee.toLowerCase().includes(e.target.value)
-			)
+		const filterTask = tasks.filter(
+			(task) =>
+				task.assignee.toLowerCase() === e.target.value.toLowerCase()
 		);
+		setFilteredTasks(filterTask);
+		setSearchFilteredTasks(filterTask);
 	};
 
 	const changeSearchHandler = (e) => {
 		setSearch(e.target.value);
 		setFilteredTasks(
-			tasks.filter((t) => t.task.toLowerCase().includes(e.target.value))
+			searchFilteredTasks.filter((t) =>
+				t.task.toLowerCase().includes(e.target.value)
+			)
 		);
 	};
 
 	//clear filter by setting filteredTasks as tasks and filter as empty string
 	const clearFilterHandler = () => {
 		setFilteredTasks(tasks);
+		setSearchFilteredTasks(tasks);
 		setFilter('');
 	};
 
@@ -143,10 +147,11 @@ const Board = () => {
 						onChange={changeSearchHandler}
 						value={search}
 					/>
-					<InputBox
+					<SelectInput
 						label="Filter by Assignee"
 						onChange={changeFilterHandler}
 						value={filter}
+						setItems={new Set(tasks.map((task) => task.assignee))}
 					/>
 					<Button variant="contained" onClick={clearFilterHandler}>
 						Clear Filters

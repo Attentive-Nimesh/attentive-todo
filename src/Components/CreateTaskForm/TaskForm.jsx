@@ -4,35 +4,25 @@ import SelectInput from '../SelectInput/SelectInput';
 import Modal from '../Modal/Modal';
 
 const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
-	const [task, setTask] = useState(editTask ? editTask.task : '');
-	const [assignee, setAssignee] = useState(editTask ? editTask.assignee : '');
-	const [status, setStatus] = useState(editTask ? editTask.status : 'Todo');
-	const [priority, setPriority] = useState(
-		editTask ? editTask.priority : 'high'
-	);
-	const [hours, setHours] = useState(editTask ? editTask.hours : 0);
-	const [days, setDays] = useState(editTask ? editTask.days : 0);
-
-	const changeTaskHandler = (e) => setTask(e.target.value);
-	const changeStatusHandler = (e) => setStatus(e.target.value);
-	const changePriorityHandler = (e) => setPriority(e.target.value);
-	const changeHoursHandler = (e) => setHours(e.target.value);
-	const changeDaysHandler = (e) => setDays(e.target.value);
-	const changeAssigneeHandler = (e) => setAssignee(e.target.value);
+	const [taskMap, setTaskMap] = useState({
+		task: editTask ? editTask.task : '',
+		assignee: editTask ? editTask.assignee : '',
+		status: editTask ? editTask.status : 'Todo',
+		priority: editTask ? editTask.priority : 'high',
+		hours: editTask ? editTask.hours : 0,
+		days: editTask ? editTask.days : 0,
+	});
 
 	const clickModalHandler = () => {
-		const newtask = {
-			task,
-			assignee,
-			status,
-			priority,
-			hours,
-			days,
+		onCreate({
+			...taskMap,
 			id: editTask ? editTask.id : new Date().toISOString(),
 			isDeleted: false,
-		};
-		onCreate(newtask);
+		});
 	};
+
+	const changeValueHandler = (value, key) =>
+		setTaskMap((p) => ({ ...p, [key]: value }));
 
 	return (
 		<Modal
@@ -44,8 +34,8 @@ const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
 		>
 			<InputBox
 				label={'Write a task'}
-				onChange={changeTaskHandler}
-				value={task}
+				onChange={(e) => changeValueHandler(e.target.value, 'task')}
+				value={taskMap.task}
 				sx={{ marginBottom: '1rem' }}
 			/>
 			<SelectInput
@@ -55,23 +45,22 @@ const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
 					{ value: 'high', name: 'High' },
 					{ value: 'low', name: 'low' },
 				]}
-				value={priority}
-				onChange={changePriorityHandler}
+				onChange={(e) => changeValueHandler(e.target.value, 'priority')}
+				value={taskMap.priority}
 				sx={{ marginBottom: '1rem' }}
 			/>
 			<InputBox
 				label={'Assignee'}
-				onChange={changeAssigneeHandler}
-				value={assignee}
+				onChange={(e) => changeValueHandler(e.target.value, 'assignee')}
+				value={taskMap.assignee}
 				sx={{ marginBottom: '1rem' }}
 			/>
 			<div className="flex-box">
 				<InputBox
 					label={'Days'}
-					onChange={changeDaysHandler}
-					value={days}
+					onChange={(e) => changeValueHandler(e.target.value, 'days')}
+					value={taskMap.days}
 					sx={{
-						marginBottom: '1rem',
 						marginRight: '1rem',
 						flex: 1,
 					}}
@@ -79,12 +68,12 @@ const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
 				/>
 				<InputBox
 					label={'Hours'}
-					noFullWidth={true}
-					onChange={changeHoursHandler}
-					value={hours}
+					onChange={(e) =>
+						changeValueHandler(e.target.value, 'hours')
+					}
+					value={taskMap.hours}
 					type="number"
 					sx={{
-						marginBottom: '1rem',
 						flex: 1,
 					}}
 				/>
@@ -92,8 +81,8 @@ const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
 			<SelectInput
 				label={'Select Status'}
 				labelId="select-status"
-				value={status}
-				onChange={changeStatusHandler}
+				onChange={(e) => changeValueHandler(e.target.value, 'status')}
+				value={taskMap.status}
 				sx={{ marginBottom: '1rem' }}
 			/>
 		</Modal>

@@ -1,12 +1,13 @@
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-const FilterInput = ({
+const SelectInput = ({
 	label,
 	labelId,
 	filter,
 	items,
 	value,
 	onChange,
+	setItems,
 	sx,
 }) => {
 	return (
@@ -19,11 +20,15 @@ const FilterInput = ({
 					</MenuItem>
 				)}
 
-				{!items && <MenuItem value={'Todo'}>To-do</MenuItem>}
-				{!items && (
+				{!items && !setItems && (
+					<MenuItem value={'Todo'}>To-do</MenuItem>
+				)}
+				{!items && !setItems && (
 					<MenuItem value={'In-Progress'}>In-Progress</MenuItem>
 				)}
-				{!items && <MenuItem value={'Completed'}>Completed</MenuItem>}
+				{!items && !setItems && (
+					<MenuItem value={'Completed'}>Completed</MenuItem>
+				)}
 
 				{items &&
 					items.length > 0 &&
@@ -32,9 +37,16 @@ const FilterInput = ({
 							{item.name}
 						</MenuItem>
 					))}
+
+				{setItems &&
+					Array.from(setItems).map((item) => (
+						<MenuItem key={item} value={item}>
+							{item}
+						</MenuItem>
+					))}
 			</Select>
 		</FormControl>
 	);
 };
 
-export default FilterInput;
+export default SelectInput;
