@@ -52,8 +52,7 @@ const Board = () => {
 	const changeFilterHandler = (e) => {
 		setFilter(e.target.value);
 		const filterTask = tasks.filter(
-			(task) =>
-				task.assignee.toLowerCase() === e.target.value.toLowerCase()
+			(task) => task.assignee === e.target.value
 		);
 		setFilteredTasks(filterTask);
 		setSearchFilteredTasks(filterTask);
@@ -85,6 +84,7 @@ const Board = () => {
 
 		setTasks(createdTasks);
 		setFilteredTasks(createdTasks);
+		setSearchFilteredTasks(createdTasks);
 		localStorage.setItem('board', JSON.stringify(createdTasks));
 		toggleModal();
 		setToastMessage('Created Task Successfully');
@@ -104,6 +104,7 @@ const Board = () => {
 				: [...editFilterTasks, task];
 		setTasks(editedTasks);
 		setFilteredTasks(editedTasks);
+		setSearchFilteredTasks(editedTasks);
 		localStorage.setItem('board', JSON.stringify(editedTasks));
 		setToastMessage('Edited Task Successfully');
 		setToastType('success');
@@ -121,6 +122,7 @@ const Board = () => {
 		copyTasks[taskIdx].isDeleted = true;
 		setTasks(copyTasks);
 		setFilteredTasks(copyTasks);
+		setSearchFilteredTasks(copyTasks);
 		localStorage.setItem('board', JSON.stringify(copyTasks));
 		setToastMessage('Deleted Task Successfully');
 		setToastType('success');
