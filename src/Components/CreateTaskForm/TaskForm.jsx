@@ -29,6 +29,7 @@ const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
 			hours,
 			days,
 			id: editTask ? editTask.id : new Date().toISOString(),
+			isDeleted: false,
 		};
 		onCreate(newtask);
 	};

@@ -6,11 +6,11 @@ const DeletedTasks = () => {
 	const [deletedTasks, setDeletedTasks] = useState([]);
 
 	useEffect(() => {
-		const deleteTasks = JSON.parse(localStorage.getItem('delete'));
+		const deleteTasks = JSON.parse(localStorage.getItem('board'));
 		if (deleteTasks) {
 			setDeletedTasks(deleteTasks);
 		} else {
-			localStorage.setItem('delete', JSON.stringify([]));
+			localStorage.setItem('board', JSON.stringify([]));
 		}
 	}, []);
 
@@ -20,13 +20,15 @@ const DeletedTasks = () => {
 			{deletedTasks.length === 0 && <p>No Deleted Tasks</p>}
 			{deletedTasks.length > 0 && (
 				<ul className={classes['deleted-tasks-item']}>
-					{deletedTasks.map((task, idx) => (
-						<DeletedTaskItem
-							key={task.id}
-							task={task}
-							num={idx + 1}
-						/>
-					))}
+					{deletedTasks
+						.filter((task) => task.isDeleted)
+						.map((task, idx) => (
+							<DeletedTaskItem
+								key={task.id}
+								task={task}
+								num={idx + 1}
+							/>
+						))}
 				</ul>
 			)}
 		</div>

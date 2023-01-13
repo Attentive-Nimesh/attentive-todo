@@ -2,13 +2,13 @@ import React from 'react';
 import classes from './Tasks.module.css';
 import TaskItems from '../TasksItems/TaskItems';
 
-const Tasks = ({ task, tasks, onEdit, onDelete }) => {
+const Tasks = ({ status, tasks, onEdit, onDelete }) => {
 	return (
 		<div className={classes['tasks-container']}>
-			<h3>{task}</h3>
+			<h3>{status}</h3>
 			<TaskItems
 				tasks={tasks}
-				name={task}
+				status={status}
 				onEdit={onEdit}
 				onDelete={onDelete}
 			/>

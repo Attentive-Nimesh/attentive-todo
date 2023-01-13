@@ -1,7 +1,7 @@
 import TaskItem from '../TaskItem/TaskItem';
 import classes from './TaskItems.module.css';
 
-const TaskItems = ({ tasks, onEdit, onDelete, name }) => {
+const TaskItems = ({ tasks, onEdit, onDelete, status }) => {
 	return (
 		<ul className={classes.tasks}>
 			{tasks.length > 0 &&
@@ -13,7 +13,7 @@ const TaskItems = ({ tasks, onEdit, onDelete, name }) => {
 						onDelete={onDelete}
 					/>
 				))}
-			{tasks.length === 0 && <p>No {name} Tasks</p>}
+			{tasks.length === 0 && <p>No {status} Tasks</p>}
 		</ul>
 	);
 };

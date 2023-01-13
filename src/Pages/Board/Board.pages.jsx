@@ -4,135 +4,128 @@ import { useEffect, useState } from 'react';
 import Tasks from '../../Components/Tasks/Tasks';
 import InputBox from '../../Components/Input/InputBox';
 import TaskForm from '../../Components/CreateTaskForm/TaskForm';
+import Toast from '../../Components/Toast/Toast';
+
+const TASKS_STATUS = {
+	TODO: 'Todo',
+	IN_PROGRESS: 'In-Progress',
+	COMPLETED: 'Completed',
+};
 
 const Board = () => {
-	const [taskMap, setTaskMap] = useState({});
-	const [filteredTaskMap, setFilteredTaskMap] = useState({});
+	const [tasks, setTasks] = useState([]);
+	const [filteredTasks, setFilteredTasks] = useState([]);
 	const [showModal, setShowModal] = useState(false);
+	const [showToast, setShowToast] = useState(false);
+	const [toastMessage, setToastMessage] = useState('');
+	const [toastType, setToastType] = useState('success');
 	const [filter, setFilter] = useState('');
 	const [search, setSearch] = useState('');
 
 	/*
 	taking board data from localstorage api if not present setting board data
-	for filteredTaskMap and taskMap  as well as json version in localstorage
+	for filteredTasks and tasks as well as json version in localstorage
 	*/
 	useEffect(() => {
-		const taskBoard = JSON.parse(localStorage.getItem('board'));
-		if (taskBoard) {
-			setTaskMap(taskBoard);
-			setFilteredTaskMap(taskBoard);
+		const tasks_data = JSON.parse(localStorage.getItem('board'));
+		if (tasks_data) {
+			setTasks(tasks_data);
+			setFilteredTasks(tasks_data);
 		} else {
-			const mp = { Todo: [], 'In-Progress': [], Completed: [] };
-			setTaskMap(mp);
-			setFilteredTaskMap(mp);
-			localStorage.setItem('board', JSON.stringify(mp));
+			setTasks([]);
+			setFilteredTasks([]);
 		}
 	}, []);
+
+	useEffect(() => {
+		let timer;
+		if (showToast) {
+			timer = setTimeout(() => setShowToast(false), 5000);
+		}
+		return () => clearTimeout(timer);
+	}, [showToast]);
 
 	//toogling modal
 	const toggleModal = () => setShowModal((prev) => !prev);
 
-	//setting filter as well as filtering taskmap using includes function of string
+	//setting filter as well as filtering tasks using includes function of string
 	const changeFilterHandler = (e) => {
 		setFilter(e.target.value);
-		setFilteredTaskMap({
-			Todo: taskMap['Todo'].filter((t) =>
-				t.assignee.toLowerCase().includes(e.target.value.toLowerCase())
-			),
-			'In-Progress': taskMap['In-Progress'].filter((t) =>
-				t.assignee.toLowerCase().includes(e.target.value.toLowerCase())
-			),
-			Completed: taskMap['Completed'].filter((t) =>
-				t.assignee.toLowerCase().includes(e.target.value.toLowerCase())
-			),
-		});
+		setFilteredTasks(
+			tasks.filter((task) =>
+				task.assignee.toLowerCase().includes(e.target.value)
+			)
+		);
 	};
 
 	const changeSearchHandler = (e) => {
 		setSearch(e.target.value);
-		setFilteredTaskMap({
-			Todo: taskMap['Todo'].filter((t) =>
-				t.task.toLowerCase().includes(e.target.value.toLowerCase())
-			),
-			'In-Progress': taskMap['In-Progress'].filter((t) =>
-				t.task.toLowerCase().includes(e.target.value.toLowerCase())
-			),
-			Completed: taskMap['Completed'].filter((t) =>
-				t.task.toLowerCase().includes(e.target.value.toLowerCase())
-			),
-		});
+		setFilteredTasks(
+			tasks.filter((t) => t.task.toLowerCase().includes(e.target.value))
+		);
 	};
 
-	//sclear filter by setting filteredTaskMap as taskMap
+	//clear filter by setting filteredTasks as tasks and filter as empty string
 	const clearFilterHandler = () => {
-		setFilteredTaskMap(taskMap);
+		setFilteredTasks(tasks);
 		setFilter('');
 	};
 
 	/*
 	onCreate in TaskForm will run this createTask
-	mp created by using task.status as key and as per priority put it on start or end of array
-	then setting taskMap, filteredMap as well as localstorage of board key
+	as per task priority task is pushed at first or last place of task array
 	*/
 	const createTaskHandler = (task) => {
-		const mp = {
-			...taskMap,
-			[task.status]:
-				task.priority === 'high'
-					? [task, ...taskMap[task.status]]
-					: [...taskMap[task.status], task],
-		};
-		setTaskMap(mp);
-		setFilteredTaskMap(mp);
+		const createdTasks =
+			task.priority === 'high' ? [task, ...tasks] : [...tasks, task];
+
+		setTasks(createdTasks);
+		setFilteredTasks(createdTasks);
+		localStorage.setItem('board', JSON.stringify(createdTasks));
 		toggleModal();
-		localStorage.setItem('board', JSON.stringify(mp));
+		setToastMessage('Created Task Successfully');
+		setToastType('success');
+		setShowToast(true);
 	};
 
 	/*
 	onEdit in TaskItem (Tasks -> TaskItems -> TaskItem) will run this editStatusHandler
-	from prevStatus key the task is filtered using id then 
-	mp is created using current status key(can be previous one) and task is put in start or end as per priority
-	then setting taskMap, filteredMap as well as localstorage of board key
+	task is filtered out of tasks array as per not matching id then it is added as per priority to first or last position
 	*/
-	const editStatusHandler = (task, prevStatus) => {
-		const tasks = taskMap[prevStatus].filter((t) => t.id !== task.id);
-		taskMap[prevStatus] = tasks;
-		const mp = {
-			...taskMap,
-			[task.status]:
-				task.priority === 'high'
-					? [task, ...taskMap[task.status]]
-					: [...taskMap[task.status], task],
-		};
-		setTaskMap(mp);
-		setFilteredTaskMap(mp);
-		localStorage.setItem('board', JSON.stringify(taskMap));
+	const editStatusHandler = (task) => {
+		const editFilterTasks = tasks.filter((t) => t.id !== task.id);
+		const editedTasks =
+			task.priority === 'high'
+				? [task, ...editFilterTasks]
+				: [...editFilterTasks, task];
+		setTasks(editedTasks);
+		setFilteredTasks(editedTasks);
+		localStorage.setItem('board', JSON.stringify(editedTasks));
+		setToastMessage('Edited Task Successfully');
+		setToastType('success');
+		setShowToast(true);
 	};
 
 	/*
 	onDelete in TaskItem (Tasks -> TaskItems -> TaskItem) will run this 
-	mp is created by filtering the task id not equal to current item id
-	then setting taskMap, filteredMap as well as localstorage of both board as well as delete key
+	filter the current tasks array by checking task.id not equal to current element id
+	then setting its isDeleted value as true and pushing
 	*/
-	const deleteTaskHandler = (task) => {
-		const mp = {
-			...taskMap,
-			[task.status]: taskMap[task.status].filter((t) => t.id !== task.id),
-		};
-		setTaskMap(mp);
-		setFilteredTaskMap(mp);
-		localStorage.setItem('board', JSON.stringify(taskMap));
-		const deletedItem = JSON.parse(localStorage.getItem('delete'));
-		if (deletedItem)
-			localStorage.setItem(
-				'delete',
-				JSON.stringify([...deletedItem, task])
-			);
-		else localStorage.setItem('delete', JSON.stringify([task]));
+	const deleteTaskHandler = (taskId) => {
+		const taskIdx = tasks.findIndex((task) => task.id === taskId);
+		const copyTasks = [...tasks];
+		copyTasks[taskIdx].isDeleted = true;
+		setTasks(copyTasks);
+		setFilteredTasks(copyTasks);
+		localStorage.setItem('board', JSON.stringify(copyTasks));
+		setToastMessage('Deleted Task Successfully');
+		setToastType('success');
+		setShowToast(true);
 	};
 
 	return (
 		<>
+			{showToast && <Toast type={toastType} message={toastMessage} />}
 			{showModal && (
 				<TaskForm
 					onCreate={createTaskHandler}
@@ -160,11 +153,15 @@ const Board = () => {
 					</Button>
 				</div>
 				<div className={classes['tasks-types']}>
-					{Object.keys(filteredTaskMap).map((task) => (
+					{Object.keys(TASKS_STATUS).map((status) => (
 						<Tasks
-							key={task}
-							task={task}
-							tasks={filteredTaskMap[task]}
+							key={status}
+							status={TASKS_STATUS[status]}
+							tasks={filteredTasks.filter(
+								(task) =>
+									task.status === TASKS_STATUS[status] &&
+									!task.isDeleted
+							)}
 							onEdit={editStatusHandler}
 							onDelete={deleteTaskHandler}
 						/>

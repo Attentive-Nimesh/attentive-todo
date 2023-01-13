@@ -13,12 +13,12 @@ const TaskItem = ({ task, onEdit, onDelete }) => {
 	const toggleDeleteModal = () => setDeleteModal((prev) => !prev);
 
 	const saveEditHandler = (editTask) => {
-		onEdit(editTask, task.status);
+		onEdit(editTask);
 		toggleEditModal();
 	};
 
 	const deleteConfirmHandler = () => {
-		onDelete(task);
+		onDelete(task.id);
 		toggleDeleteModal();
 	};
 
