@@ -1,12 +1,13 @@
+import React from 'react';
 import {
 	createBrowserRouter,
 	redirect,
 	RouterProvider,
 } from 'react-router-dom';
 import MainNavigation from './Components/MainNavigation/MainNavigation';
-import Board from './Pages/Board/Board.pages';
+import Board from './Pages/Board/Board';
 import DeletedTasks from './Pages/Deleted Tasks/DeletedTasks.pages';
-import ErrorPage from './Pages/ErrorPage/ErrorPage.pages';
+import ErrorPage from './Pages/ErrorPage/ErrorPages';
 
 const router = createBrowserRouter([
 	{
@@ -30,7 +31,6 @@ const router = createBrowserRouter([
 		],
 	},
 ]);
-
 function App() {
 	return <RouterProvider router={router} />;
 }

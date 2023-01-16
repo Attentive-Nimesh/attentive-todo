@@ -1,7 +1,13 @@
 import React from 'react';
+import { Todo } from '../../Models/Todo';
 import classes from './DeletedTaskItem.module.css';
 
-const DeletedTaskItem = ({ task, num }) => {
+type DeletedTaskItemProps = {
+	task: Todo;
+	num: number;
+};
+
+const DeletedTaskItem = ({ task, num }: DeletedTaskItemProps) => {
 	return (
 		<li className={classes['deleted-task-item']}>
 			<span>{num}.</span>

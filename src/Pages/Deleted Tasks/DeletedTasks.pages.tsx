@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DeletedTaskItem from '../../Components/DeleteTaskItem/DeletedTaskItem';
 import classes from './DeletedTasks.module.css';
+import { Todo } from '../../Models/Todo';
 
 const DeletedTasks = () => {
-	const [deletedTasks, setDeletedTasks] = useState([]);
+	const [deletedTasks, setDeletedTasks] = useState<Todo[]>([]);
 
 	useEffect(() => {
-		const deleteTasks = JSON.parse(localStorage.getItem('board'));
+		const deletedDataString = localStorage.getItem('board');
+		const deleteTasks = deletedDataString
+			? JSON.parse(deletedDataString)
+			: null;
+
 		if (deleteTasks) {
-			setDeletedTasks(deleteTasks);
+			setDeletedTasks(deleteTasks.filter((task: Todo) => task.isDeleted));
 		} else {
 			localStorage.setItem('board', JSON.stringify([]));
 		}
@@ -20,15 +25,13 @@ const DeletedTasks = () => {
 			{deletedTasks.length === 0 && <p>No Deleted Tasks</p>}
 			{deletedTasks.length > 0 && (
 				<ul className={classes['deleted-tasks-item']}>
-					{deletedTasks
-						.filter((task) => task.isDeleted)
-						.map((task, idx) => (
-							<DeletedTaskItem
-								key={task.id}
-								task={task}
-								num={idx + 1}
-							/>
-						))}
+					{deletedTasks.map((task, idx) => (
+						<DeletedTaskItem
+							key={task.id}
+							task={task}
+							num={idx + 1}
+						/>
+					))}
 				</ul>
 			)}
 		</div>

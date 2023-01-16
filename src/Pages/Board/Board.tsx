@@ -1,26 +1,28 @@
-import { Button } from '@mui/material';
+import React from 'react';
+import { Button, SelectChangeEvent } from '@mui/material';
 import classes from './Board.module.css';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Tasks from '../../Components/Tasks/Tasks';
 import InputBox from '../../Components/Input/InputBox';
 import TaskForm from '../../Components/CreateTaskForm/TaskForm';
 import Toast from '../../Components/Toast/Toast';
 import SelectInput from '../../Components/SelectInput/SelectInput';
+import { Todo } from '../../Models/Todo';
 
-const TASKS_STATUS = {
-	TODO: 'Todo',
-	IN_PROGRESS: 'In-Progress',
-	COMPLETED: 'Completed',
-};
+enum TASKS_STATUS {
+	'Todo' = 'Todo',
+	'In-Progress' = 'In-Progress',
+	'Completed' = 'Completed',
+}
 
 const Board = () => {
-	const [tasks, setTasks] = useState([]);
-	const [filteredTasks, setFilteredTasks] = useState([]);
-	const [searchFilteredTasks, setSearchFilteredTasks] = useState([]);
+	const [tasks, setTasks] = useState<Todo[]>([]);
+	const [filteredTasks, setFilteredTasks] = useState(tasks);
+	const [searchFilteredTasks, setSearchFilteredTasks] = useState(tasks);
 	const [showModal, setShowModal] = useState(false);
 	const [showToast, setShowToast] = useState(false);
 	const [toastMessage, setToastMessage] = useState('');
-	const [toastType, setToastType] = useState('success');
+	const [toastType, setToastType] = useState<'success' | 'error'>('success');
 	const [filter, setFilter] = useState('');
 	const [search, setSearch] = useState('');
 
@@ -29,7 +31,11 @@ const Board = () => {
 	for filteredTasks and tasks as well as json version in localstorage
 	*/
 	useEffect(() => {
-		const tasks_data = JSON.parse(localStorage.getItem('board'));
+		const taskDataString = localStorage.getItem('board');
+		const tasks_data: Todo[] | null = taskDataString
+			? JSON.parse(taskDataString)
+			: null;
+
 		if (tasks_data) {
 			setTasks(tasks_data);
 			setFilteredTasks(tasks_data);
@@ -38,7 +44,7 @@ const Board = () => {
 	}, []);
 
 	useEffect(() => {
-		let timer;
+		let timer: NodeJS.Timeout | undefined;
 		if (showToast) {
 			timer = setTimeout(() => setShowToast(false), 5000);
 		}
@@ -49,7 +55,7 @@ const Board = () => {
 	const toggleModal = () => setShowModal((prev) => !prev);
 
 	//setting filter as well as filtering tasks using includes function of string
-	const changeFilterHandler = (e) => {
+	const changeFilterHandler = (e: SelectChangeEvent<string>) => {
 		setFilter(e.target.value);
 		const filterTask = tasks.filter(
 			(task) => task.assignee === e.target.value
@@ -58,11 +64,11 @@ const Board = () => {
 		setSearchFilteredTasks(filterTask);
 	};
 
-	const changeSearchHandler = (e) => {
+	const changeSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearch(e.target.value);
 		setFilteredTasks(
 			searchFilteredTasks.filter((t) =>
-				t.task.toLowerCase().includes(e.target.value)
+				t.task.toLowerCase().includes(e.target.value.toLowerCase())
 			)
 		);
 	};
@@ -78,7 +84,7 @@ const Board = () => {
 	onCreate in TaskForm will run this createTask
 	as per task priority task is pushed at first or last place of task array
 	*/
-	const createTaskHandler = (task) => {
+	const createTaskHandler = (task: Todo) => {
 		const createdTasks =
 			task.priority === 'high' ? [task, ...tasks] : [...tasks, task];
 
@@ -96,7 +102,7 @@ const Board = () => {
 	onEdit in TaskItem (Tasks -> TaskItems -> TaskItem) will run this editStatusHandler
 	task is filtered out of tasks array as per not matching id then it is added as per priority to first or last position
 	*/
-	const editStatusHandler = (task) => {
+	const editStatusHandler = (task: Todo) => {
 		const editFilterTasks = tasks.filter((t) => t.id !== task.id);
 		const editedTasks =
 			task.priority === 'high'
@@ -116,7 +122,7 @@ const Board = () => {
 	filter the current tasks array by checking task.id not equal to current element id
 	then setting its isDeleted value as true and pushing
 	*/
-	const deleteTaskHandler = (taskId) => {
+	const deleteTaskHandler = (taskId: string) => {
 		const taskIdx = tasks.findIndex((task) => task.id === taskId);
 		const copyTasks = [...tasks];
 		copyTasks[taskIdx].isDeleted = true;
@@ -129,9 +135,20 @@ const Board = () => {
 		setShowToast(true);
 	};
 
+	const ToastCloseHandler = () => {
+		setShowToast(false);
+		setToastMessage('');
+	};
+
 	return (
 		<>
-			{showToast && <Toast type={toastType} message={toastMessage} />}
+			{showToast && (
+				<Toast
+					type={toastType}
+					message={toastMessage}
+					onClose={ToastCloseHandler}
+				/>
+			)}
 			{showModal && (
 				<TaskForm
 					onCreate={createTaskHandler}
@@ -163,11 +180,10 @@ const Board = () => {
 					{Object.keys(TASKS_STATUS).map((status) => (
 						<Tasks
 							key={status}
-							status={TASKS_STATUS[status]}
+							status={status}
 							tasks={filteredTasks.filter(
 								(task) =>
-									task.status === TASKS_STATUS[status] &&
-									!task.isDeleted
+									task.status === status && !task.isDeleted
 							)}
 							onEdit={editStatusHandler}
 							onDelete={deleteTaskHandler}

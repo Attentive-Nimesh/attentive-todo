@@ -1,9 +1,17 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import InputBox from '../Input/InputBox';
 import SelectInput from '../SelectInput/SelectInput';
 import Modal from '../Modal/Modal';
+import { Todo } from '../../Models/Todo';
 
-const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
+type TaskFormPropType = {
+	show: boolean;
+	onToggle: () => void;
+	onCreate: (task: Todo) => void;
+	editTask?: Todo;
+};
+
+const TaskForm = ({ show, onToggle, onCreate, editTask }: TaskFormPropType) => {
 	const [taskMap, setTaskMap] = useState({
 		task: editTask ? editTask.task : '',
 		assignee: editTask ? editTask.assignee : '',
@@ -21,7 +29,7 @@ const TaskForm = ({ show, onToggle, onCreate, editTask }) => {
 		});
 	};
 
-	const changeValueHandler = (value, key) =>
+	const changeValueHandler = (value: string, key: string) =>
 		setTaskMap((p) => ({ ...p, [key]: value }));
 
 	return (

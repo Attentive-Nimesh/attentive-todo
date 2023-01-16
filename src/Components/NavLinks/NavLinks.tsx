@@ -1,7 +1,9 @@
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import classes from './NavLinks.module.css';
+
 const NavLinks = () => {
-	const activeNavLinkClassName = ({ isActive }) =>
+	const activeNavLinkClassName = ({ isActive }: { isActive: boolean }) =>
 		isActive ? classes.active : undefined;
 
 	return (

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import NavLinks from '../NavLinks/NavLinks';

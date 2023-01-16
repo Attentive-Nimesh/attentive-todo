@@ -1,7 +1,9 @@
+import React from 'react';
 import TaskItem from '../TaskItem/TaskItem';
 import classes from './TaskItems.module.css';
+import { TasksProps } from '../Tasks/Tasks';
 
-const TaskItems = ({ tasks, onEdit, onDelete, status }) => {
+const TaskItems = ({ tasks, onEdit, onDelete, status }: TasksProps) => {
 	return (
 		<ul className={classes.tasks}>
 			{tasks.length > 0 &&

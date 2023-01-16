@@ -1,18 +1,26 @@
+import React, { useState } from 'react';
+import classes from './TaskItem.module.css';
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import classes from './TaskItem.module.css';
-import { useState } from 'react';
 import Modal from '../Modal/Modal';
 import TaskForm from '../CreateTaskForm/TaskForm';
+import { Todo } from '../../Models/Todo';
 
-const TaskItem = ({ task, onEdit, onDelete }) => {
+type TaskItemProp = {
+	task: Todo;
+	onEdit: (editTask: Todo) => void;
+	onDelete: (taskId: string) => void;
+};
+
+const TaskItem = ({ task, onEdit, onDelete }: TaskItemProp) => {
 	const [editModal, setEditModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
 
 	const toggleEditModal = () => setEditModal((prev) => !prev);
 	const toggleDeleteModal = () => setDeleteModal((prev) => !prev);
 
-	const saveEditHandler = (editTask) => {
+	const saveEditHandler = (editTask: Todo) => {
 		onEdit(editTask);
 		toggleEditModal();
 	};

@@ -1,4 +1,28 @@
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import React from 'react';
+import {
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
+	SelectChangeEvent,
+} from '@mui/material';
+import { Theme } from '@emotion/react';
+
+type ItemsType = {
+	name: string;
+	value: string;
+};
+
+type SelectInputPropType = {
+	label: string;
+	labelId?: string;
+	filter?: boolean;
+	items?: ItemsType[];
+	value: string;
+	onChange: (e: SelectChangeEvent<string>) => void;
+	setItems?: Set<string>;
+	sx?: Theme;
+};
 
 const SelectInput = ({
 	label,
@@ -9,7 +33,7 @@ const SelectInput = ({
 	onChange,
 	setItems,
 	sx,
-}) => {
+}: SelectInputPropType) => {
 	return (
 		<FormControl fullWidth variant="standard" sx={sx}>
 			<InputLabel id={labelId}>{label}</InputLabel>

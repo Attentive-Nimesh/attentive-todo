@@ -1,19 +1,28 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 import classes from './Toast.module.css';
 import DoneIcon from '@mui/icons-material/Done';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-const COLOR_TYPES = {
-	success: 'rgb(67, 212, 22)',
-	error: 'rgb(255, 54, 54)',
+
+const enum COLORS {
+	success = 'rgb(67, 212, 22)',
+	error = 'rgb(255, 54, 54)',
+}
+
+type ToastProps = {
+	message: string;
+	onClose: () => void;
+	type: 'success' | 'error';
 };
 
-const Notification = ({ message, onClose, type }) => {
+const Notification = ({ message, onClose, type }: ToastProps) => {
 	return (
 		<div
 			className={classes['notification-container']}
 			onClick={onClose}
 			style={{
-				backgroundColor: COLOR_TYPES[type],
+				backgroundColor:
+					type === 'success' ? COLORS.success : COLORS.error,
 			}}
 		>
 			{type === 'success' ? <DoneIcon /> : <PriorityHighIcon />}
@@ -22,10 +31,10 @@ const Notification = ({ message, onClose, type }) => {
 	);
 };
 
-const Toast = (props) =>
+const Toast = (props: ToastProps) =>
 	ReactDOM.createPortal(
 		<Notification {...props} />,
-		document.getElementById('toast')
+		document.getElementById('toast') as HTMLDivElement
 	);
 
 export default Toast;

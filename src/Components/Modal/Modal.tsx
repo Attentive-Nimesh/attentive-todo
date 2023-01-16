@@ -1,8 +1,18 @@
-import { Backdrop, Button } from '@mui/material';
+import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom';
+import { Backdrop, Button } from '@mui/material';
 import classes from './Modal.module.css';
 
 const portalEl = document.getElementById('modal-root');
+
+type ModalProps = {
+	headerText: string;
+	buttonText: string;
+	onClose: () => void;
+	show: boolean;
+	children?: ReactNode;
+	onClick: () => void;
+};
 
 const OverLay = ({
 	headerText,
@@ -11,7 +21,7 @@ const OverLay = ({
 	show,
 	children,
 	onClick,
-}) => {
+}: ModalProps) => {
 	return (
 		<>
 			<Backdrop
@@ -37,7 +47,7 @@ const OverLay = ({
 	);
 };
 
-const Modal = (props) =>
-	ReactDOM.createPortal(<OverLay {...props} />, portalEl);
+const Modal = (props: ModalProps) =>
+	ReactDOM.createPortal(<OverLay {...props} />, portalEl as HTMLElement);
 
 export default Modal;
