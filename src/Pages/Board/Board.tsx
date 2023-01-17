@@ -8,17 +8,6 @@ import { TodoContext } from '../../Store/TodoProvider';
 import SearchFilterForm from '../../Components/SearchFilterForm/SearchFilterForm';
 import Toast from '../../Components/Toast/Toast';
 
-/*
-const TASKS_STATUS: {
-	Todo: 'Todo';
-	'In-Progress': 'In-Progress';
-	Completed: 'Completed';
-} = {
-	Todo: 'Todo',
-	'In-Progress': 'In-Progress',
-	Completed: 'Completed',
-};
-*/
 enum TASKS_STATUS {
 	'Todo' = 'Todo',
 	'In-Progress' = 'In-Progress',
@@ -26,18 +15,22 @@ enum TASKS_STATUS {
 }
 
 const Board = () => {
-	const { filteredTasks, showToast, toastMessage, toggleToast } =
-		useContext(TodoContext);
+	const {
+		filteredTasks,
+		showToast,
+		toastMessage,
+		toggleToast,
+		toastSuccess,
+	} = useContext(TodoContext);
 	const [showModal, setShowModal] = useState(false);
 
-	//toogling modal
 	const toggleModal = () => setShowModal((prev) => !prev);
 
 	return (
 		<>
 			{showToast && (
 				<Toast
-					type="success"
+					type={toastSuccess ? 'success' : 'error'}
 					message={toastMessage}
 					show={showToast}
 					onClose={toggleToast}

@@ -19,20 +19,16 @@ const TaskForm = ({ show, onToggle, task }: TaskFormPropType) => {
 		priority: task ? task.priority : 'high',
 		hours: task ? task.hours : 0,
 		days: task ? task.days : 0,
+		isDeleted: false,
 	});
 
 	const { editTask, createTask } = useContext(TodoContext);
 
 	const clickModalHandler = () => {
-		const newtask = {
-			...taskMap,
-			id: task ? task.id : new Date().toISOString(),
-			isDeleted: false,
-		};
 		if (task) {
-			editTask(newtask);
+			editTask({ ...taskMap, id: task.id });
 		} else {
-			createTask(newtask);
+			createTask(taskMap);
 		}
 
 		onToggle();

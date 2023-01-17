@@ -21,7 +21,7 @@ const TaskItem = ({ task }: TaskItemProp) => {
 	const toggleDeleteModal = () => setDeleteModal((prev) => !prev);
 
 	const deleteConfirmHandler = () => {
-		deleteTask(task.id);
+		deleteTask(task.id ? task.id : '');
 		toggleDeleteModal();
 	};
 

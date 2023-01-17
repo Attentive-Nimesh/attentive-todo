@@ -1,4 +1,4 @@
-export type Todo = {
+export interface Todo {
 	task: string;
 	assignee: string;
 	status: 'Todo' | 'In-Progress' | 'Completed';
@@ -6,5 +6,5 @@ export type Todo = {
 	hours: number;
 	days: number;
 	isDeleted: boolean;
-	id: string;
-};
+	id?: string;
+}

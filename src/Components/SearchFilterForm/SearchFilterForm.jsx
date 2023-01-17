@@ -21,7 +21,11 @@ const SearchFilterForm = () => {
 				filter={true}
 				onChange={changeFilter}
 				value={filter}
-				setItems={new Set(tasks.map((task) => task.assignee))}
+				setItems={
+					new Set(
+						tasks.map((task) => !task.isDeleted && task.assignee)
+					)
+				}
 			/>
 			<Button variant="contained" onClick={clearFilter}>
 				Clear Filters
