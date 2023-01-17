@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import classes from './Toast.module.css';
 import DoneIcon from '@mui/icons-material/Done';
@@ -13,9 +13,18 @@ type ToastProps = {
 	message: string;
 	onClose: () => void;
 	type: 'success' | 'error';
+	show: boolean;
 };
 
-const Notification = ({ message, onClose, type }: ToastProps) => {
+const Notification = ({ message, onClose, type, show }: ToastProps) => {
+	useEffect(() => {
+		let timer: NodeJS.Timeout | undefined;
+		if (show) {
+			timer = setTimeout(() => onClose(), 5000);
+		}
+		return () => clearTimeout(timer);
+	}, [show, onClose]);
+
 	return (
 		<div
 			className={classes['notification-container']}

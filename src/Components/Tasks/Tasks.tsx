@@ -6,20 +6,13 @@ import { Todo } from '../../Models/Todo';
 export type TasksProps = {
 	status: string;
 	tasks: Todo[];
-	onEdit: (editTask: Todo) => void;
-	onDelete: (taskId: string) => void;
 };
 
-const Tasks = ({ status, tasks, onEdit, onDelete }: TasksProps) => {
+const Tasks = ({ status, tasks }: TasksProps) => {
 	return (
 		<div className={classes['tasks-container']}>
 			<h3>{status}</h3>
-			<TaskItems
-				tasks={tasks}
-				status={status}
-				onEdit={onEdit}
-				onDelete={onDelete}
-			/>
+			<TaskItems tasks={tasks} status={status} />
 		</div>
 	);
 };

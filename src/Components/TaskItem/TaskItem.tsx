@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import classes from './TaskItem.module.css';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -6,27 +6,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Modal from '../Modal/Modal';
 import TaskForm from '../CreateTaskForm/TaskForm';
 import { Todo } from '../../Models/Todo';
+import { TodoContext } from '../../Store/TodoProvider';
 
 type TaskItemProp = {
 	task: Todo;
-	onEdit: (editTask: Todo) => void;
-	onDelete: (taskId: string) => void;
 };
 
-const TaskItem = ({ task, onEdit, onDelete }: TaskItemProp) => {
+const TaskItem = ({ task }: TaskItemProp) => {
 	const [editModal, setEditModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
+	const { deleteTask } = useContext(TodoContext);
 
 	const toggleEditModal = () => setEditModal((prev) => !prev);
 	const toggleDeleteModal = () => setDeleteModal((prev) => !prev);
 
-	const saveEditHandler = (editTask: Todo) => {
-		onEdit(editTask);
-		toggleEditModal();
-	};
-
 	const deleteConfirmHandler = () => {
-		onDelete(task.id);
+		deleteTask(task.id);
 		toggleDeleteModal();
 	};
 
@@ -34,10 +29,9 @@ const TaskItem = ({ task, onEdit, onDelete }: TaskItemProp) => {
 		<>
 			{editModal && (
 				<TaskForm
-					onCreate={saveEditHandler}
 					show={editModal}
 					onToggle={toggleEditModal}
-					editTask={task}
+					task={task}
 				/>
 			)}
 			{deleteModal && (

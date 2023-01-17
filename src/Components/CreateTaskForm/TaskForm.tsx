@@ -1,99 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import InputBox from '../Input/InputBox';
 import SelectInput from '../SelectInput/SelectInput';
 import Modal from '../Modal/Modal';
 import { Todo } from '../../Models/Todo';
+import { TodoContext } from '../../Store/TodoProvider';
 
 type TaskFormPropType = {
 	show: boolean;
 	onToggle: () => void;
-	onCreate: (task: Todo) => void;
-	editTask?: Todo;
+	task?: Todo;
 };
 
-const TaskForm = ({ show, onToggle, onCreate, editTask }: TaskFormPropType) => {
+const TaskForm = ({ show, onToggle, task }: TaskFormPropType) => {
 	const [taskMap, setTaskMap] = useState({
-		task: editTask ? editTask.task : '',
-		assignee: editTask ? editTask.assignee : '',
-		status: editTask ? editTask.status : 'Todo',
-		priority: editTask ? editTask.priority : 'high',
-		hours: editTask ? editTask.hours : 0,
-		days: editTask ? editTask.days : 0,
+		task: task ? task.task : '',
+		assignee: task ? task.assignee : '',
+		status: task ? task.status : 'Todo',
+		priority: task ? task.priority : 'high',
+		hours: task ? task.hours : 0,
+		days: task ? task.days : 0,
 	});
 
+	const { editTask, createTask } = useContext(TodoContext);
+
 	const clickModalHandler = () => {
-		onCreate({
+		const newtask = {
 			...taskMap,
-			id: editTask ? editTask.id : new Date().toISOString(),
+			id: task ? task.id : new Date().toISOString(),
 			isDeleted: false,
-		});
+		};
+		if (task) {
+			editTask(newtask);
+		} else {
+			createTask(newtask);
+		}
+
+		onToggle();
 	};
 
 	const changeValueHandler = (value: string, key: string) =>
 		setTaskMap((p) => ({ ...p, [key]: value }));
 
 	return (
-		<Modal
-			show={show}
-			onClose={onToggle}
-			buttonText={editTask ? 'Save Edit' : 'Create Task'}
-			headerText={editTask ? 'Edit Task' : 'Create a New Task'}
-			onClick={clickModalHandler}
-		>
-			<InputBox
-				label={'Write a task'}
-				onChange={(e) => changeValueHandler(e.target.value, 'task')}
-				value={taskMap.task}
-				sx={{ marginBottom: '1rem' }}
-			/>
-			<SelectInput
-				label={'Priority'}
-				labelId="priority"
-				items={[
-					{ value: 'high', name: 'High' },
-					{ value: 'low', name: 'low' },
-				]}
-				onChange={(e) => changeValueHandler(e.target.value, 'priority')}
-				value={taskMap.priority}
-				sx={{ marginBottom: '1rem' }}
-			/>
-			<InputBox
-				label={'Assignee'}
-				onChange={(e) => changeValueHandler(e.target.value, 'assignee')}
-				value={taskMap.assignee}
-				sx={{ marginBottom: '1rem' }}
-			/>
-			<div className="flex-box">
+		<>
+			<Modal
+				show={show}
+				onClose={onToggle}
+				buttonText={task ? 'Save Edit' : 'Create Task'}
+				headerText={task ? 'Edit Task' : 'Create a New Task'}
+				onClick={clickModalHandler}
+			>
 				<InputBox
-					label={'Days'}
-					onChange={(e) => changeValueHandler(e.target.value, 'days')}
-					value={taskMap.days}
-					sx={{
-						marginRight: '1rem',
-						flex: 1,
-					}}
-					type="number"
+					label={'Write a task'}
+					onChange={(e) => changeValueHandler(e.target.value, 'task')}
+					value={taskMap.task}
+					sx={{ marginBottom: '1rem' }}
 				/>
-				<InputBox
-					label={'Hours'}
+				<SelectInput
+					label={'Priority'}
+					labelId="priority"
+					items={[
+						{ value: 'high', name: 'High' },
+						{ value: 'low', name: 'low' },
+					]}
 					onChange={(e) =>
-						changeValueHandler(e.target.value, 'hours')
+						changeValueHandler(e.target.value, 'priority')
 					}
-					value={taskMap.hours}
-					type="number"
-					sx={{
-						flex: 1,
-					}}
+					value={taskMap.priority}
+					sx={{ marginBottom: '1rem' }}
 				/>
-			</div>
-			<SelectInput
-				label={'Select Status'}
-				labelId="select-status"
-				onChange={(e) => changeValueHandler(e.target.value, 'status')}
-				value={taskMap.status}
-				sx={{ marginBottom: '1rem' }}
-			/>
-		</Modal>
+				<InputBox
+					label={'Assignee'}
+					onChange={(e) =>
+						changeValueHandler(e.target.value, 'assignee')
+					}
+					value={taskMap.assignee}
+					sx={{ marginBottom: '1rem' }}
+				/>
+				<div className="flex-box">
+					<InputBox
+						label={'Days'}
+						onChange={(e) =>
+							changeValueHandler(e.target.value, 'days')
+						}
+						value={taskMap.days}
+						sx={{
+							marginRight: '1rem',
+							flex: 1,
+						}}
+						type="number"
+					/>
+					<InputBox
+						label={'Hours'}
+						onChange={(e) =>
+							changeValueHandler(e.target.value, 'hours')
+						}
+						value={taskMap.hours}
+						type="number"
+						sx={{
+							flex: 1,
+						}}
+					/>
+				</div>
+				<SelectInput
+					label={'Select Status'}
+					labelId="select-status"
+					onChange={(e) =>
+						changeValueHandler(e.target.value, 'status')
+					}
+					value={taskMap.status}
+					sx={{ marginBottom: '1rem' }}
+				/>
+			</Modal>
+		</>
 	);
 };
 

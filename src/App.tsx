@@ -8,6 +8,7 @@ import MainNavigation from './Components/MainNavigation/MainNavigation';
 import Board from './Pages/Board/Board';
 import DeletedTasks from './Pages/Deleted Tasks/DeletedTasks.pages';
 import ErrorPage from './Pages/ErrorPage/ErrorPages';
+import TodoProvider from './Store/TodoProvider';
 
 const router = createBrowserRouter([
 	{
@@ -32,7 +33,11 @@ const router = createBrowserRouter([
 	},
 ]);
 function App() {
-	return <RouterProvider router={router} />;
+	return (
+		<TodoProvider>
+			<RouterProvider router={router} />;
+		</TodoProvider>
+	);
 }
 
 export default App;

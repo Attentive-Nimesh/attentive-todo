@@ -3,19 +3,6 @@
 	text-align: center;
 }
 
-.inputs {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top: 1.2rem;
-	gap: 1rem;
-	text-align: left;
-}
-
-.inputs button {
-	width: 400px;
-}
-
 .tasks-types {
 	display: flex;
 	align-items: center;
@@ -25,15 +12,6 @@
 }
 
 @media (max-width: 768px) {
-	.inputs {
-		flex-direction: column;
-		margin-top: 3rem;
-	}
-
-	.inputs button {
-		width: 100%;
-	}
-
 	.tasks-types {
 		flex-direction: column;
 	}
