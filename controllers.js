@@ -1,11 +1,7 @@
 const Todos = require('./models');
 
 exports.getTodos = async (req, res) => {
-	const todos = await Todos.find();
-
-	if (!todos && todos.length === 0) {
-		return res.status(404).json({ error: 'No Todos Found' });
-	}
+	const todos = await Todos.find().sort({ priority: 1, createdAt: -1 });
 
 	return res.status(200).json({
 		todos: todos.map((todo) => todo.toObject({ getters: true })),
