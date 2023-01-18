@@ -6,6 +6,10 @@
 	width: 100%;
 }
 
+.drag {
+	background-color: #b2b2b2;
+}
+
 .tasks-item span:first-of-type {
 	flex: 1;
 }

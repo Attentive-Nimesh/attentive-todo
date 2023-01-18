@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, DragEvent } from 'react';
 import classes from './TaskItem.module.css';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -15,6 +15,7 @@ type TaskItemProp = {
 const TaskItem = ({ task }: TaskItemProp) => {
 	const [editModal, setEditModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
+	const [dragClass, setDragClass] = useState(false);
 	const { deleteTask } = useContext(TodoContext);
 
 	const toggleEditModal = () => setEditModal((prev) => !prev);
@@ -23,6 +24,15 @@ const TaskItem = ({ task }: TaskItemProp) => {
 	const deleteConfirmHandler = () => {
 		deleteTask(task.id ? task.id : '');
 		toggleDeleteModal();
+	};
+
+	const onDragStartHandler = (e: DragEvent<HTMLLIElement>) => {
+		setDragClass(true);
+		e.dataTransfer.setData('json', JSON.stringify(task));
+	};
+
+	const onDragEndHandler = (e: DragEvent<HTMLLIElement>) => {
+		setDragClass(false);
 	};
 
 	return (
@@ -45,7 +55,14 @@ const TaskItem = ({ task }: TaskItemProp) => {
 					<p>Are you sure? you want to delete this task</p>
 				</Modal>
 			)}
-			<li className={classes['tasks-item']}>
+			<li
+				className={`${classes['tasks-item']} ${
+					dragClass ? classes.drag : ''
+				}`}
+				draggable
+				onDragStart={onDragStartHandler}
+				onDragEnd={onDragEndHandler}
+			>
 				<span>{task.task}</span>
 				<span className={classes['task-actions']}>
 					<span onClick={toggleEditModal}>
