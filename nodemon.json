@@ -1,7 +1,0 @@
-{
-	"env": {
-		"MONGO_USER": "nimesh",
-		"MONGO_PASSWORD": "noni1234",
-		"MONGO_NAME": "attentive-todo"
-	}
-}
