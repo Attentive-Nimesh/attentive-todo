@@ -28,7 +28,7 @@ const TaskItem = ({ task }: TaskItemProp) => {
 
 	const onDragStartHandler = (e: DragEvent<HTMLLIElement>) => {
 		setDragClass(true);
-		e.dataTransfer.setData('json', JSON.stringify(task));
+		e.dataTransfer.setData('todo', JSON.stringify(task));
 	};
 
 	const onDragEndHandler = (e: DragEvent<HTMLLIElement>) => {

@@ -63,11 +63,13 @@ const SelectInput = ({
 					))}
 
 				{setItems &&
-					Array.from(setItems).map((item) => (
-						<MenuItem key={item} value={item}>
-							{item}
-						</MenuItem>
-					))}
+					Array.from(setItems)
+						.filter((item) => item !== '')
+						.map((item, i) => (
+							<MenuItem key={item} value={item}>
+								{item}
+							</MenuItem>
+						))}
 			</Select>
 		</FormControl>
 	);

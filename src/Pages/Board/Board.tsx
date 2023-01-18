@@ -1,7 +1,6 @@
-import React from 'react';
-import { Button } from '@mui/material';
+import React, { useState, useContext, ChangeEvent, useEffect } from 'react';
+import { Button, SelectChangeEvent } from '@mui/material';
 import classes from './Board.module.css';
-import { useState, useContext } from 'react';
 import Tasks from '../../Components/Tasks/Tasks';
 import TaskForm from '../../Components/CreateTaskForm/TaskForm';
 import { TodoContext } from '../../Store/TodoProvider';
@@ -15,33 +14,71 @@ enum TASKS_STATUS {
 }
 
 const Board = () => {
-	const {
-		filteredTasks,
-		showToast,
-		toastMessage,
-		toggleToast,
-		toastSuccess,
-	} = useContext(TodoContext);
+	const { tasks, toast, toggleToast } = useContext(TodoContext);
+
+	const [filteredTasks, setFilteredTasks] = useState(tasks);
+	const [searchFilteredTasks, setSearchFilteredTasks] = useState(tasks);
+	const [filter, setFilter] = useState('');
 	const [showModal, setShowModal] = useState(false);
+	const [search, setSearch] = useState('');
+
+	useEffect(() => {
+		setFilteredTasks(tasks);
+		setSearchFilteredTasks(tasks);
+	}, [tasks]);
+
+	const changeFilter = (e: SelectChangeEvent<string>) => {
+		setFilter(e.target.value);
+		if (e.target.value === '') {
+			setFilteredTasks(tasks);
+			setSearchFilteredTasks(tasks);
+			return;
+		}
+		const filterTask = tasks.filter(
+			(task) => task.assignee === e.target.value
+		);
+		setFilteredTasks(filterTask);
+		setSearchFilteredTasks(filterTask);
+	};
+
+	const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearch(e.target.value);
+		setFilteredTasks(
+			searchFilteredTasks.filter((t) =>
+				t.task.toLowerCase().includes(e.target.value.toLowerCase())
+			)
+		);
+	};
+
+	//clear filter by setting filteredTasks as tasks and filter as empty string
+	const clearFilter = () => {
+		setFilteredTasks(tasks);
+		setSearchFilteredTasks(tasks);
+		setFilter('');
+	};
 
 	const toggleModal = () => setShowModal((prev) => !prev);
 
 	return (
 		<>
-			{showToast && (
-				<Toast
-					type={toastSuccess ? 'success' : 'error'}
-					message={toastMessage}
-					show={showToast}
-					onClose={toggleToast}
-				/>
-			)}
+			{toast.show && <Toast {...toast} onClose={toggleToast} />}
 			{showModal && <TaskForm show={showModal} onToggle={toggleModal} />}
 			<div className={classes['board-container']}>
 				<Button variant="contained" onClick={toggleModal}>
 					Create Task
 				</Button>
-				<SearchFilterForm />
+				<SearchFilterForm
+					onClear={clearFilter}
+					onSearch={changeSearch}
+					onFilter={changeFilter}
+					filter={filter}
+					search={search}
+					setItems={
+						new Set<string>(
+							tasks.map((t) => (!t.isDeleted ? t.assignee : ''))
+						)
+					}
+				/>
 				<div className={classes['tasks-types']}>
 					{Object.keys(TASKS_STATUS).map((status) => (
 						<Tasks

@@ -17,13 +17,9 @@ const TaskItems = ({ tasks, status }: TasksProps) => {
 		setDragOverClasses(false);
 	};
 
-	const onDragEndHandler = (e: DragEvent<HTMLUListElement>) => {
-		setDragOverClasses(false);
-	};
-
 	const onDropHandler = (e: DragEvent<HTMLUListElement>) => {
 		setDragOverClasses(false);
-		const task: Todo = JSON.parse(e.dataTransfer.getData('json'));
+		const task: Todo = JSON.parse(e.dataTransfer.getData('todo'));
 		if (task.status === status) return;
 		if (
 			status === 'Todo' ||
@@ -41,7 +37,6 @@ const TaskItems = ({ tasks, status }: TasksProps) => {
 			}`}
 			onDragOver={dragOverHandler}
 			onDragLeave={onDragLeaveHandler}
-			onDragEnd={onDragEndHandler}
 			onDrop={onDropHandler}
 		>
 			{tasks.length > 0 &&
