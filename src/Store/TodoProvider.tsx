@@ -77,8 +77,8 @@ const TodoProvider = ({ children }: { children?: ReactNode }) => {
 			setToast(createToast('Fetching Failed, Please Try Again', true));
 		}
 	};
+
 	useEffect(() => {
-		console.log('first');
 		fetchTodos();
 	}, []);
 

@@ -50,7 +50,6 @@ const Board = () => {
 		);
 	};
 
-	//clear filter by setting filteredTasks as tasks and filter as empty string
 	const clearFilter = () => {
 		setFilteredTasks(tasks);
 		setSearchFilteredTasks(tasks);
@@ -75,7 +74,7 @@ const Board = () => {
 					search={search}
 					setItems={
 						new Set<string>(
-							tasks.map((t) => (!t.isDeleted ? t.assignee : ''))
+							tasks.map((t) => (t.isDeleted ? t.assignee : ''))
 						)
 					}
 				/>
