@@ -13,17 +13,16 @@ type ToastProps = {
 	message: string;
 	onClose: () => void;
 	type: 'success' | 'error';
-	show: boolean;
 };
 
-const Notification = ({ message, onClose, type, show }: ToastProps) => {
+const Notification = ({ message, onClose, type }: ToastProps) => {
 	useEffect(() => {
 		let timer: NodeJS.Timeout | undefined;
-		if (show) {
+		if (message) {
 			timer = setTimeout(() => onClose(), 5000);
 		}
 		return () => clearTimeout(timer);
-	}, [show, onClose]);
+	}, [message, onClose]);
 
 	return (
 		<div

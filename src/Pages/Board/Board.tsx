@@ -60,7 +60,7 @@ const Board = () => {
 
 	return (
 		<>
-			{toast.show && <Toast {...toast} onClose={toggleToast} />}
+			{toast.message && <Toast {...toast} onClose={toggleToast} />}
 			{showModal && <TaskForm show={showModal} onToggle={toggleModal} />}
 			<div className={classes['board-container']}>
 				<Button variant="contained" onClick={toggleModal}>
@@ -74,7 +74,7 @@ const Board = () => {
 					search={search}
 					setItems={
 						new Set<string>(
-							tasks.map((t) => (t.isDeleted ? t.assignee : ''))
+							tasks.map((t) => (!t.isDeleted ? t.assignee : ''))
 						)
 					}
 				/>

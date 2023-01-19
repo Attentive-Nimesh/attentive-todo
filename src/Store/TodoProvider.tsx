@@ -1,25 +1,8 @@
 import React, { useState, useEffect, useCallback, ReactNode } from 'react';
 import { Todo } from '../Models/Todo';
-import axios from 'axios';
+import { getTodos, postTodos, putTodos, createToast } from '../utils/api';
 
-type ErrorType = {
-	error: string;
-	todos?: null;
-	todo?: null;
-};
-
-type GetTodoType = {
-	message: string;
-	todos: Todo[];
-};
-
-type PostTodoType = {
-	message: string;
-	todo: Todo;
-};
-
-type ToastType = {
-	show: boolean;
+export type ToastType = {
 	message: string;
 	type: 'success' | 'error';
 };
@@ -35,46 +18,30 @@ type TodoContextTypes = {
 
 export const TodoContext = React.createContext<TodoContextTypes>({
 	tasks: [],
-	toast: { show: false, message: '', type: 'success' },
+	toast: { message: '', type: 'success' },
 	createTask: (task: Todo) => {},
 	editTask: (task: Todo) => {},
 	deleteTask: (taskId: string) => {},
 	toggleToast: () => {},
 });
 
-const createToast = (
-	message: string,
-	show: boolean,
-	type: 'success' | 'error' = 'error'
-) => ({
-	show,
-	type,
-	message,
-});
-
 const TodoProvider = ({ children }: { children?: ReactNode }) => {
 	const [tasks, setTasks] = useState<Todo[]>([]);
 	const [toast, setToast] = useState<ToastType>({
-		show: false,
 		type: 'success',
 		message: '',
 	});
+
 	const fetchTodos = async () => {
 		try {
-			const response = await axios.get('http://localhost:8080/todos');
-			if (response.status !== 200) {
-				setToast(createToast('Not Fetched Properly', true));
-				return;
-			}
-			const data: GetTodoType | ErrorType = await response.data;
-			if (data.todos) {
-				setTasks(data.todos);
-				setToast(createToast('Fetch Successful', true, 'success'));
+			const response = await getTodos();
+			if (Array.isArray(response)) {
+				setTasks(response);
 			} else {
-				setToast(createToast(data.error, true));
+				setToast(response);
 			}
 		} catch (err) {
-			setToast(createToast('Fetching Failed, Please Try Again', true));
+			setToast(createToast('Fetch Failed'));
 		}
 	};
 
@@ -84,85 +51,35 @@ const TodoProvider = ({ children }: { children?: ReactNode }) => {
 
 	const createTask = async (task: Todo) => {
 		try {
-			const response = await axios.post(
-				'http://localhost:8080/todos',
-				task
-			);
-			const data: PostTodoType | ErrorType = await response.data;
-			if (response.status !== 201) {
-				setToast(createToast('Not able to Post', true));
-				return;
-			}
-
-			if (data.todo) {
-				const createdTasks =
-					data.todo.priority === 'high'
-						? [data.todo, ...tasks]
-						: [...tasks, data.todo];
-				setTasks(createdTasks);
-				setToast(createToast('Created Successfully', true, 'success'));
-			} else {
-				setToast(createToast(data.error, true));
-			}
+			const response = await postTodos(task);
+			setToast(response);
 		} catch (err) {
-			setToast(createToast('Failed to Create', true));
+			setToast(createToast('Failed to Create'));
 		}
+		fetchTodos();
 	};
 
 	const editTask = async (task: Todo) => {
-		const editFilterTasks = tasks.filter((t) => t.id !== task.id);
 		try {
-			const response = await axios.patch(
-				`http://localhost:8080/todos/${task.id}`,
-				task
-			);
-			if (response.status !== 201) {
-				setToast(createToast('Not able to Update', true));
-				return;
-			}
-			const data: PostTodoType | ErrorType = await response.data;
-			if (data.todo) {
-				const editedTasks =
-					data.todo.priority === 'high'
-						? [data.todo, ...editFilterTasks]
-						: [...editFilterTasks, data.todo];
-				setTasks(editedTasks);
-				setToast(createToast('Edited Successfully', true, 'success'));
-			} else {
-				setToast(createToast(data.error, true));
-			}
+			const response = await putTodos(task);
+			setToast(response);
 		} catch (err) {
-			setToast(createToast('Failed to Update', true));
+			setToast(createToast('Failed to Update'));
 		}
+		fetchTodos();
 	};
 
 	const deleteTask = async (taskId: string) => {
-		const taskIdx = tasks.findIndex((task) => task.id === taskId);
 		try {
-			const response = await axios.patch(
-				`http://localhost:8080/todos/delete/${taskId}`
-			);
-			const data: PostTodoType | ErrorType = await response.data;
-
-			if (response.status !== 201) {
-				setToast(createToast('Not able to Delete', true));
-				return;
-			}
-
-			if (data.todo) {
-				const copyTasks = [...tasks];
-				copyTasks[taskIdx].isDeleted = true;
-				setTasks(copyTasks);
-				setToast(createToast('Deleted Successfully', true, 'success'));
-			} else {
-				setToast(createToast(data.error, true));
-			}
+			const response = await putTodos(taskId, true);
+			setToast(response);
 		} catch (err) {
-			setToast(createToast('Failed to Delete', true));
+			setToast(createToast('Failed to Delete'));
 		}
+		fetchTodos();
 	};
 
-	const toggleToast = useCallback(() => setToast(createToast('', false)), []);
+	const toggleToast = useCallback(() => setToast(createToast('')), []);
 
 	const value = {
 		tasks,
