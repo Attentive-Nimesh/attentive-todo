@@ -1,13 +1,17 @@
-import React, { DragEvent, useContext, useState } from 'react';
+import React, { DragEvent, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import TaskItem from '../TaskItem/TaskItem';
 import classes from './TaskItems.module.css';
 import { TasksProps } from '../Tasks/Tasks';
 import { Todo } from '../../Models/Todo';
-import { TodoContext } from '../../Store/TodoProvider';
+import { useEdit } from '../../hooks/useApi';
 
-const TaskItems = ({ tasks, status }: TasksProps) => {
+const TaskItems = ({ tasks, status, showNotification }: TasksProps) => {
+	const queryClient = useQueryClient();
+	const editQuery = useEdit(showNotification, () =>
+		queryClient.invalidateQueries({ queryKey: ['todos'] })
+	);
 	const [dragOverClasses, setDragOverClasses] = useState(false);
-	const { editTask } = useContext(TodoContext);
 	const dragOverHandler = (e: DragEvent<HTMLUListElement>) => {
 		e.preventDefault();
 		setDragOverClasses(true);
@@ -27,7 +31,7 @@ const TaskItems = ({ tasks, status }: TasksProps) => {
 			status === 'Completed'
 		)
 			task.status = status;
-		editTask(task);
+		editQuery.mutate(task);
 	};
 
 	return (
@@ -40,7 +44,13 @@ const TaskItems = ({ tasks, status }: TasksProps) => {
 			onDrop={onDropHandler}
 		>
 			{tasks.length > 0 &&
-				tasks.map((data) => <TaskItem key={data.id} task={data} />)}
+				tasks.map((data) => (
+					<TaskItem
+						showNotification={showNotification}
+						key={data.id}
+						task={data}
+					/>
+				))}
 			{tasks.length === 0 && <p>No {status} Tasks</p>}
 		</ul>
 	);

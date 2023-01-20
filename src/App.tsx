@@ -8,7 +8,9 @@ import MainNavigation from './Components/MainNavigation/MainNavigation';
 import Board from './Pages/Board/Board';
 import DeletedTasks from './Pages/Deleted Tasks/DeletedTasks.pages';
 import ErrorPage from './Pages/ErrorPage/ErrorPages';
-import TodoProvider from './Store/TodoProvider';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
 	{
@@ -34,9 +36,9 @@ const router = createBrowserRouter([
 ]);
 function App() {
 	return (
-		<TodoProvider>
+		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router} />;
-		</TodoProvider>
+		</QueryClientProvider>
 	);
 }
 

@@ -2,13 +2,11 @@ import axios from 'axios';
 import { Todo } from '../Models/Todo';
 
 type GetTodoType = {
-	message?: string;
-	todos?: Todo[];
-	error?: string;
+	message: string;
+	todos: Todo[];
 };
 
 type PostTodoType = {
-	error?: string;
 	message?: string;
 	todo?: Todo;
 };
@@ -25,30 +23,23 @@ export const getTodos = async () => {
 	const response = await axios.get('http://localhost:8080/todos');
 
 	if (response.status !== 200) {
-		return createToast('Not Fetched Properly');
+		throw new Error('Not Fetched Properly');
 	}
 
 	const data: GetTodoType = await response.data;
-	return data.todos
-		? data.todos
-		: createToast(data.error ? data.error : 'Unexpected Error');
+	return data.todos;
 };
 
 export const postTodos = async (task: Todo) => {
-	const response = await axios.patch(
-		`http://localhost:8080/todos/${task.id}`,
-		task
-	);
+	const response = await axios.post(`http://localhost:8080/todos`, task);
 	if (response.status !== 201) {
-		return createToast('Not able to Update');
+		throw new Error('Not able to Update');
 	}
 	const data: PostTodoType = await response.data;
-	return data.todo
-		? createToast('Edited Successfully', 'success')
-		: createToast(data.error ? data.error : 'Unexpected Error');
+	return data.todo;
 };
 
-export const putTodos = async (task: Todo | string, deleted = false) => {
+export const patchTodos = async (task: Todo | string, deleted = false) => {
 	let response;
 	if (deleted) {
 		response = await axios.patch(
@@ -62,14 +53,9 @@ export const putTodos = async (task: Todo | string, deleted = false) => {
 	}
 
 	if (!response || response.status !== 201) {
-		return createToast(`Not able to ${deleted ? 'Delete' : 'Update'}`);
+		throw new Error(`Not able to ${deleted ? 'Delete' : 'Update'}`);
 	}
 
 	const data: PostTodoType = await response.data;
-	return data.todo
-		? createToast(
-				`${deleted ? 'Deleted' : 'Edited'} Successfully`,
-				'success'
-		  )
-		: createToast(data.error ? data.error : 'Unexpected Error');
+	return data.todo;
 };

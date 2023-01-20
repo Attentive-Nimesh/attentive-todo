@@ -1,17 +1,19 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import DeletedTaskItem from '../../Components/DeleteTaskItem/DeletedTaskItem';
 import classes from './DeletedTasks.module.css';
 import { Todo } from '../../Models/Todo';
-import { TodoContext } from '../../Store/TodoProvider';
+import { useFetch } from '../../hooks/useApi';
+import Loader from '../../Components/Loader/Loader';
 
 const DeletedTasks = () => {
-	const { tasks: deletedTasks } = useContext(TodoContext);
+	const { data: deletedTasks, isLoading } = useFetch();
 
 	return (
 		<div className={classes['deleted-tasks-container']}>
 			<h2>Deleted Tasks</h2>
-			{deletedTasks.length === 0 && <p>No Deleted Tasks</p>}
-			{deletedTasks.length > 0 && (
+			{isLoading && <Loader />}
+			{!deletedTasks && !isLoading && <p>No Deleted Tasks</p>}
+			{!isLoading && deletedTasks && (
 				<ul className={classes['deleted-tasks-item']}>
 					{deletedTasks
 						.filter((task: Todo) => task.isDeleted)

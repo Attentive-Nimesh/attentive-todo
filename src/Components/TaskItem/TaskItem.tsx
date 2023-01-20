@@ -1,4 +1,5 @@
-import React, { useState, useContext, DragEvent } from 'react';
+import React, { useState, DragEvent } from 'react';
+import { useQueryClient } from 'react-query';
 import classes from './TaskItem.module.css';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -6,24 +7,30 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Modal from '../Modal/Modal';
 import TaskForm from '../CreateTaskForm/TaskForm';
 import { Todo } from '../../Models/Todo';
-import { TodoContext } from '../../Store/TodoProvider';
+import { ToastType } from '../../Pages/Board/Board';
+import { useDelete } from '../../hooks/useApi';
 
 type TaskItemProp = {
 	task: Todo;
+	showNotification: (data: ToastType) => void;
 };
 
-const TaskItem = ({ task }: TaskItemProp) => {
+const TaskItem = ({ task, showNotification }: TaskItemProp) => {
 	const [editModal, setEditModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [dragClass, setDragClass] = useState(false);
-	const { deleteTask } = useContext(TodoContext);
+	const queryClient = useQueryClient();
 
 	const toggleEditModal = () => setEditModal((prev) => !prev);
 	const toggleDeleteModal = () => setDeleteModal((prev) => !prev);
 
-	const deleteConfirmHandler = () => {
-		deleteTask(task.id ? task.id : '');
+	const deleteQuery = useDelete(showNotification, () => {
+		queryClient.invalidateQueries({ queryKey: ['todos'] });
 		toggleDeleteModal();
+	});
+
+	const deleteConfirmHandler = () => {
+		deleteQuery.mutate(task.id ? task.id : '');
 	};
 
 	const onDragStartHandler = (e: DragEvent<HTMLLIElement>) => {
@@ -42,6 +49,7 @@ const TaskItem = ({ task }: TaskItemProp) => {
 					show={editModal}
 					onToggle={toggleEditModal}
 					task={task}
+					showNotification={showNotification}
 				/>
 			)}
 			{deleteModal && (
@@ -49,7 +57,7 @@ const TaskItem = ({ task }: TaskItemProp) => {
 					show={deleteModal}
 					onClose={toggleDeleteModal}
 					headerText={'Confirmation'}
-					buttonText="Delete"
+					buttonText={deleteQuery.isLoading ? 'Deleting..' : 'Delete'}
 					onClick={deleteConfirmHandler}
 				>
 					<p>Are you sure? you want to delete this task</p>

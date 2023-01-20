@@ -1,17 +1,25 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import InputBox from '../Input/InputBox';
 import SelectInput from '../SelectInput/SelectInput';
 import Modal from '../Modal/Modal';
 import { Todo } from '../../Models/Todo';
-import { TodoContext } from '../../Store/TodoProvider';
+import { ToastType } from '../../Pages/Board/Board';
+import { useQueryClient } from 'react-query';
+import { useCreate, useEdit } from '../../hooks/useApi';
 
 type TaskFormPropType = {
 	show: boolean;
 	onToggle: () => void;
 	task?: Todo;
+	showNotification: (data: ToastType) => void;
 };
 
-const TaskForm = ({ show, onToggle, task }: TaskFormPropType) => {
+const TaskForm = ({
+	show,
+	onToggle,
+	task,
+	showNotification,
+}: TaskFormPropType) => {
 	const [taskMap, setTaskMap] = useState({
 		task: task ? task.task : '',
 		assignee: task ? task.assignee : '',
@@ -22,16 +30,24 @@ const TaskForm = ({ show, onToggle, task }: TaskFormPropType) => {
 		isDeleted: false,
 	});
 
-	const { editTask, createTask } = useContext(TodoContext);
+	const queryClient = useQueryClient();
+
+	const createQuery = useCreate(showNotification, () => {
+		queryClient.invalidateQueries({ queryKey: ['todos'] });
+		onToggle();
+	});
+
+	const editQuery = useEdit(showNotification, () => {
+		queryClient.invalidateQueries({ queryKey: ['todos'] });
+		onToggle();
+	});
 
 	const clickModalHandler = () => {
 		if (task) {
-			editTask({ ...taskMap, id: task.id });
+			editQuery.mutate({ ...taskMap, id: task.id });
 		} else {
-			createTask(taskMap);
+			createQuery.mutate(taskMap);
 		}
-
-		onToggle();
 	};
 
 	const changeValueHandler = (value: string, key: string) =>
@@ -42,7 +58,15 @@ const TaskForm = ({ show, onToggle, task }: TaskFormPropType) => {
 			<Modal
 				show={show}
 				onClose={onToggle}
-				buttonText={task ? 'Save Edit' : 'Create Task'}
+				buttonText={
+					task
+						? editQuery.isLoading
+							? 'Saving...'
+							: 'Save Edit'
+						: createQuery.isLoading
+						? 'Creating'
+						: 'Create Task'
+				}
 				headerText={task ? 'Edit Task' : 'Create a New Task'}
 				onClick={clickModalHandler}
 			>

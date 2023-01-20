@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { useState, useCallback, ReactNode } from 'react';
+import { useQuery, useMutation } from 'react-query';
 import { Todo } from '../Models/Todo';
-import { getTodos, postTodos, putTodos, createToast } from '../utils/api';
+import { getTodos, postTodos, createToast, patchTodos } from '../utils/api';
 
 export type ToastType = {
 	message: string;
@@ -14,6 +15,10 @@ type TodoContextTypes = {
 	editTask: (task: Todo) => void;
 	deleteTask: (taskId: string) => void;
 	toggleToast: () => void;
+	isTaskLoading: boolean;
+	isCreating: boolean;
+	isEditing: boolean;
+	isDeleting: boolean;
 };
 
 export const TodoContext = React.createContext<TodoContextTypes>({
@@ -23,6 +28,10 @@ export const TodoContext = React.createContext<TodoContextTypes>({
 	editTask: (task: Todo) => {},
 	deleteTask: (taskId: string) => {},
 	toggleToast: () => {},
+	isTaskLoading: false,
+	isCreating: false,
+	isDeleting: false,
+	isEditing: false,
 });
 
 const TodoProvider = ({ children }: { children?: ReactNode }) => {
@@ -32,51 +41,39 @@ const TodoProvider = ({ children }: { children?: ReactNode }) => {
 		message: '',
 	});
 
-	const fetchTodos = async () => {
-		try {
-			const response = await getTodos();
-			if (Array.isArray(response)) {
-				setTasks(response);
-			} else {
-				setToast(response);
-			}
-		} catch (err) {
-			setToast(createToast('Fetch Failed'));
-		}
-	};
+	const { isLoading: isTaskLoading } = useQuery({
+		queryKey: ['todos'],
+		queryFn: getTodos,
+		onSuccess: (data: Todo[]) => {
+			setTasks(data);
+		},
+		onError: (err: Error) => {
+			setToast(createToast(err.message));
+		},
+	});
 
-	useEffect(() => {
-		fetchTodos();
-	}, []);
+	const createQuery = useMutation({
+		mutationFn: (task: Todo) => postTodos(task),
+	});
+
+	const putQuery = useMutation({
+		mutationFn: (task: Todo) => patchTodos(task),
+	});
+
+	const deleteQuery = useMutation({
+		mutationFn: (taskId: string) => patchTodos(taskId, true),
+	});
 
 	const createTask = async (task: Todo) => {
-		try {
-			const response = await postTodos(task);
-			setToast(response);
-		} catch (err) {
-			setToast(createToast('Failed to Create'));
-		}
-		fetchTodos();
+		createQuery.mutate(task);
 	};
 
 	const editTask = async (task: Todo) => {
-		try {
-			const response = await putTodos(task);
-			setToast(response);
-		} catch (err) {
-			setToast(createToast('Failed to Update'));
-		}
-		fetchTodos();
+		putQuery.mutate(task);
 	};
 
 	const deleteTask = async (taskId: string) => {
-		try {
-			const response = await putTodos(taskId, true);
-			setToast(response);
-		} catch (err) {
-			setToast(createToast('Failed to Delete'));
-		}
-		fetchTodos();
+		deleteQuery.mutate(taskId);
 	};
 
 	const toggleToast = useCallback(() => setToast(createToast('')), []);
@@ -88,6 +85,10 @@ const TodoProvider = ({ children }: { children?: ReactNode }) => {
 		deleteTask,
 		toast,
 		toggleToast,
+		isTaskLoading,
+		isCreating: createQuery.isLoading,
+		isEditing: putQuery.isLoading,
+		isDeleting: deleteQuery.isLoading,
 	};
 
 	return (

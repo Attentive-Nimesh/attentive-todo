@@ -8,7 +8,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 type SearchFilterFormPropType = {
 	search: string;
 	filter: string;
-	setItems: Set<string>;
+	setItems?: Set<string>;
 	onSearch: (e: ChangeEvent<HTMLInputElement>) => void;
 	onFilter: (e: SelectChangeEvent<string>) => void;
 	onClear: () => void;
