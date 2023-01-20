@@ -2,7 +2,6 @@ const Todos = require('./models');
 
 exports.getTodos = async (req, res) => {
 	const todos = await Todos.find().sort({ priority: 1, createdAt: -1 });
-
 	return res.status(200).json({
 		todos: todos.map((todo) => todo.toObject({ getters: true })),
 		message: 'Successfully Fetched Todos',
@@ -23,7 +22,6 @@ exports.patchTodos = async (req, res) => {
 	const { tid } = req.params;
 	const todoData = req.body;
 	const todo = await Todos.findById(tid);
-	if (!todo) return res.status(404).json({ error: 'Invalid Todo ID' });
 	Object.keys(todoData).map((data) => (todo[data] = todoData[data]));
 	const savedTodo = await todo.save();
 	return res.status(201).json({
@@ -35,7 +33,6 @@ exports.patchTodos = async (req, res) => {
 exports.deleteTodos = async (req, res) => {
 	const { tid } = req.params;
 	const todo = await Todos.findById(tid);
-	if (!todo) return res.status(404).json({ error: 'Invalid Todo ID' });
 	todo.isDeleted = true;
 	const deletedTodo = await todo.save();
 	return res.status(201).json({
