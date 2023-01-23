@@ -10,7 +10,7 @@ export const useEdit = (
 	useMutation({
 		mutationFn: (data: Todo) => patchTodos(data),
 		onSuccess: () => {
-			fn(createToast('Successfully Created', 'success'));
+			fn(createToast('Successfully Edited', 'success'));
 			remainingFn();
 		},
 		onError: (err: Error) => fn(createToast(err.message)),
@@ -23,7 +23,7 @@ export const useCreate = (
 	useMutation({
 		mutationFn: (data: Todo) => postTodos(data),
 		onSuccess: () => {
-			fn(createToast('Successfully Edited', 'success'));
+			fn(createToast('Successfully Created', 'success'));
 			remainingFn();
 		},
 		onError: (err: Error) => fn(createToast(err.message)),
@@ -36,7 +36,7 @@ export const useDelete = (
 	useMutation({
 		mutationFn: (data: string) => patchTodos(data, true),
 		onSuccess: () => {
-			fn(createToast('Successfully Edited', 'success'));
+			fn(createToast('Successfully Deleted', 'success'));
 			remainingFn();
 		},
 		onError: (err: Error) => fn(createToast(err.message)),

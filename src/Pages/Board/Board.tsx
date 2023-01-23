@@ -6,7 +6,6 @@ import TaskForm from '../../Components/CreateTaskForm/TaskForm';
 import SearchFilterForm from '../../Components/SearchFilterForm/SearchFilterForm';
 import Toast from '../../Components/Toast/Toast';
 import { createToast } from '../../utils/api';
-import { Todo } from '../../Models/Todo';
 import Loader from '../../Components/Loader/Loader';
 import { useFetch } from '../../hooks/useApi';
 
@@ -22,8 +21,6 @@ enum TASKS_STATUS {
 }
 
 const Board = () => {
-	const [filteredTasks, setFilteredTasks] = useState<Todo[]>([]);
-	const [searchFilteredTasks, setSearchFilteredTasks] = useState<Todo[]>([]);
 	const [toast, setToast] = useState<ToastType>({
 		type: 'error',
 		message: '',
@@ -32,50 +29,25 @@ const Board = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [search, setSearch] = useState('');
 
-	const handleNotification = (data: ToastType) => setToast(data);
-
-	const { data: tasks, isLoading } = useFetch(
-		handleNotification,
-		(data: Todo[]) => {
-			setFilteredTasks(data);
-			setSearchFilteredTasks(data);
-		}
+	const handleNotification = useCallback(
+		(data: ToastType) => setToast(data),
+		[]
 	);
+	const { data: tasks, isLoading } = useFetch(handleNotification);
 
-	const changeFilter = (e: SelectChangeEvent<string>) => {
+	const changeFilter = useCallback((e: SelectChangeEvent<string>) => {
 		setFilter(e.target.value);
-		if (e.target.value === '') {
-			setFilteredTasks(tasks ? tasks : []);
-			setSearchFilteredTasks(tasks ? tasks : []);
-			return;
-		}
-		if (tasks) {
-			const filterTask = tasks.filter(
-				(task) => task.assignee === e.target.value
-			);
-			setFilteredTasks(filterTask);
-			setSearchFilteredTasks(filterTask);
-		}
-	};
+	}, []);
 
-	const changeSearch = (e: ChangeEvent<HTMLInputElement>) => {
+	const changeSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 		setSearch(e.target.value);
-		setFilteredTasks(
-			searchFilteredTasks.filter((t) =>
-				t.task.toLowerCase().includes(e.target.value.toLowerCase())
-			)
-		);
-	};
+	}, []);
 
-	const clearFilter = () => {
-		if (Array.isArray(tasks)) {
-			setFilteredTasks(tasks);
-			setSearchFilteredTasks(tasks);
-		}
+	const clearFilter = useCallback(() => {
 		setFilter('');
-	};
+	}, []);
 
-	const toggleModal = () => setShowModal((prev) => !prev);
+	const toggleModal = useCallback(() => setShowModal((prev) => !prev), []);
 
 	const toggleToast = useCallback(() => setToast(createToast('')), []);
 
@@ -101,7 +73,11 @@ const Board = () => {
 					search={search}
 					setItems={
 						new Set<string>(
-							tasks?.map((t) => (!t.isDeleted ? t.assignee : ''))
+							tasks
+								? tasks.map((t) =>
+										!t.isDeleted ? t.assignee : ''
+								  )
+								: []
 						)
 					}
 				/>
@@ -112,11 +88,34 @@ const Board = () => {
 							<Tasks
 								key={status}
 								status={status}
-								tasks={filteredTasks.filter(
-									(task) =>
-										task.status === status &&
-										!task.isDeleted
-								)}
+								tasks={
+									tasks
+										? filter !== ''
+											? tasks.filter(
+													(task) =>
+														task.status ===
+															status &&
+														!task.isDeleted &&
+														task.task
+															.toLowerCase()
+															.includes(
+																search.toLowerCase()
+															) &&
+														task.assignee === filter
+											  )
+											: tasks.filter(
+													(task) =>
+														task.status ===
+															status &&
+														!task.isDeleted &&
+														task.task
+															.toLowerCase()
+															.includes(
+																search.toLowerCase()
+															)
+											  )
+										: []
+								}
 								showNotification={handleNotification}
 							/>
 						))}
