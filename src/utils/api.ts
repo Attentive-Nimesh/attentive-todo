@@ -27,7 +27,7 @@ export const getTodos = async () => {
 	}
 
 	const data: GetTodoType = await response.data;
-	return data.todos;
+	return data.todos ? data.todos : [];
 };
 
 export const postTodos = async (task: Todo) => {
