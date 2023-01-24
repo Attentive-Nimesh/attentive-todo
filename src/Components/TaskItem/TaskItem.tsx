@@ -2,8 +2,7 @@ import React, { useState, DragEvent } from 'react';
 import { useQueryClient } from 'react-query';
 import classes from './TaskItem.module.css';
 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { EditIconFilled, DeleteIcon } from 'elysium-ui';
 import Modal from '../Modal/Modal';
 import TaskForm from '../CreateTaskForm/TaskForm';
 import { Todo } from '../../Models/Todo';
@@ -74,10 +73,10 @@ const TaskItem = ({ task, showNotification }: TaskItemProp) => {
 				<span>{task.task}</span>
 				<span className={classes['task-actions']}>
 					<span onClick={toggleEditModal}>
-						<EditIcon />
+						<EditIconFilled fill={'darkgreen'} />
 					</span>
 					<span onClick={toggleDeleteModal}>
-						<DeleteIcon />
+						<DeleteIcon fill={'red'} />
 					</span>
 				</span>
 			</li>

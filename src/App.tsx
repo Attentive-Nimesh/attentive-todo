@@ -9,6 +9,9 @@ import Board from './Pages/Board/Board';
 import DeletedTasks from './Pages/Deleted Tasks/DeletedTasks.pages';
 import ErrorPage from './Pages/ErrorPage/ErrorPages';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { StyleProvider } from 'elysium-ui';
+import 'elysium-ui/lib/styles/tokens.css';
+import 'elysium-ui/lib/styles/fonts.css';
 
 const queryClient = new QueryClient();
 
@@ -37,7 +40,9 @@ const router = createBrowserRouter([
 function App() {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<RouterProvider router={router} />;
+			<StyleProvider>
+				<RouterProvider router={router} />;
+			</StyleProvider>
 		</QueryClientProvider>
 	);
 }

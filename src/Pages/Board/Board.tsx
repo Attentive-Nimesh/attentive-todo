@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, useCallback } from 'react';
-import { Button, SelectChangeEvent } from '@mui/material';
+import { Button } from 'elysium-ui';
 import classes from './Board.module.css';
 import Tasks from '../../Components/Tasks/Tasks';
 import TaskForm from '../../Components/CreateTaskForm/TaskForm';
@@ -35,8 +35,8 @@ const Board = () => {
 	);
 	const { data: tasks, isLoading } = useFetch(handleNotification);
 
-	const changeFilter = useCallback((e: SelectChangeEvent<string>) => {
-		setFilter(e.target.value);
+	const changeFilter = useCallback((val: string) => {
+		setFilter(val);
 	}, []);
 
 	const changeSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +62,7 @@ const Board = () => {
 				/>
 			)}
 			<div className={classes['board-container']}>
-				<Button variant="contained" onClick={toggleModal}>
+				<Button onClick={toggleModal} size="large">
 					Create Task
 				</Button>
 				<SearchFilterForm

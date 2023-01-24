@@ -1,77 +1,54 @@
 import React from 'react';
-import {
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
-	SelectChangeEvent,
-} from '@mui/material';
-import { Theme } from '@emotion/react';
+import { Select } from 'elysium-ui';
 
 type ItemsType = {
-	name: string;
+	label: string;
 	value: string;
 };
 
 type SelectInputPropType = {
 	label: string;
-	labelId?: string;
-	filter?: boolean;
 	items?: ItemsType[];
 	value: string;
-	onChange: (e: SelectChangeEvent<string>) => void;
+	onChange: (val: string) => void;
 	setItems?: Set<string>;
-	sx?: Theme;
+	onClear?: () => void;
+	filter?: boolean;
 };
 
 const SelectInput = ({
 	label,
-	labelId,
-	filter,
 	items,
 	value,
 	onChange,
 	setItems,
-	sx,
+	onClear,
+	filter,
 }: SelectInputPropType) => {
 	return (
-		<FormControl fullWidth variant="standard" sx={sx}>
-			<InputLabel id={labelId}>{label}</InputLabel>
-			<Select labelId={labelId} value={value} onChange={onChange}>
-				{filter && (
-					<MenuItem value="">
-						<em>None</em>
-					</MenuItem>
-				)}
-
-				{!items && !setItems && (
-					<MenuItem value={'Todo'}>To-do</MenuItem>
-				)}
-				{!items && !setItems && (
-					<MenuItem value={'In-Progress'}>In-Progress</MenuItem>
-				)}
-				{!items && !setItems && (
-					<MenuItem value={'Completed'}>Completed</MenuItem>
-				)}
-
-				{items &&
-					items.length > 0 &&
-					items.map((item) => (
-						<MenuItem key={item.name} value={item.value}>
-							{item.name}
-						</MenuItem>
-					))}
-
-				{setItems &&
-					Array.from(setItems)
-						.filter((item) => item !== '')
-						.map((item, i) => (
-							<MenuItem key={item} value={item}>
-								{item}
-							</MenuItem>
-						))}
-			</Select>
-		</FormControl>
+		<>
+			<div className="description">{label}</div>
+			<Select
+				allowClear={filter}
+				buttonStyle={{
+					height: '48px',
+				}}
+				items={
+					setItems
+						? Array.from(setItems)
+								.filter((item) => item !== '')
+								.map((item) => ({
+									label: item,
+									value: item,
+								}))
+						: items
+				}
+				onChange={onChange}
+				onClear={onClear}
+				placeholder="Select"
+				value={value}
+			/>
+		</>
 	);
 };
 

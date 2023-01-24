@@ -18,11 +18,3 @@
 	display: inline-block;
 	margin-right: 1rem;
 }
-
-.task-actions span:first-of-type:hover {
-	color: greenyellow;
-}
-
-.task-actions span:last-of-type:hover {
-	color: red;
-}

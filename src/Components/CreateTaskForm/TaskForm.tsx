@@ -50,44 +50,42 @@ const TaskForm = ({
 		}
 	};
 
-	const changeValueHandler = (value: string, key: string) =>
+	const changeValueHandler = (value: string, key: string) => {
 		setTaskMap((p) => ({ ...p, [key]: value }));
+	};
 
 	return (
-		<>
-			<Modal
-				show={show}
-				onClose={onToggle}
-				buttonText={
-					task
-						? editQuery.isLoading
-							? 'Saving...'
-							: 'Save Edit'
-						: createQuery.isLoading
-						? 'Creating'
-						: 'Create Task'
-				}
-				headerText={task ? 'Edit Task' : 'Create a New Task'}
-				onClick={clickModalHandler}
-			>
+		<Modal
+			show={show}
+			onClose={onToggle}
+			buttonText={
+				task
+					? editQuery.isLoading
+						? 'Saving...'
+						: 'Save Edit'
+					: createQuery.isLoading
+					? 'Creating'
+					: 'Create Task'
+			}
+			headerText={task ? 'Edit Task' : 'Create a New Task'}
+			onClick={clickModalHandler}
+		>
+			<div className="form-container">
 				<InputBox
 					label={'Write a task'}
 					onChange={(e) => changeValueHandler(e.target.value, 'task')}
 					value={taskMap.task}
-					sx={{ marginBottom: '1rem' }}
 				/>
 				<SelectInput
-					label={'Priority'}
-					labelId="priority"
+					label="Priority"
 					items={[
-						{ value: 'high', name: 'High' },
-						{ value: 'low', name: 'low' },
+						{ value: 'high', label: 'High' },
+						{ value: 'low', label: 'low' },
 					]}
-					onChange={(e) =>
-						changeValueHandler(e.target.value, 'priority')
+					onChange={(val: string) =>
+						changeValueHandler(val, 'priority')
 					}
 					value={taskMap.priority}
-					sx={{ marginBottom: '1rem' }}
 				/>
 				<InputBox
 					label={'Assignee'}
@@ -95,44 +93,43 @@ const TaskForm = ({
 						changeValueHandler(e.target.value, 'assignee')
 					}
 					value={taskMap.assignee}
-					sx={{ marginBottom: '1rem' }}
 				/>
 				<div className="flex-box">
-					<InputBox
-						label={'Days'}
-						onChange={(e) =>
-							changeValueHandler(e.target.value, 'days')
-						}
-						value={taskMap.days}
-						sx={{
-							marginRight: '1rem',
-							flex: 1,
-						}}
-						type="number"
-					/>
-					<InputBox
-						label={'Hours'}
-						onChange={(e) =>
-							changeValueHandler(e.target.value, 'hours')
-						}
-						value={taskMap.hours}
-						type="number"
-						sx={{
-							flex: 1,
-						}}
-					/>
+					<div className="input-container">
+						<InputBox
+							label="Days"
+							onChange={(e) =>
+								changeValueHandler(e.target.value, 'days')
+							}
+							value={taskMap.days}
+							type="number"
+						/>
+					</div>
+					<div className="input-container">
+						<InputBox
+							label={'Hours'}
+							onChange={(e) =>
+								changeValueHandler(e.target.value, 'hours')
+							}
+							value={taskMap.hours}
+							type="number"
+						/>
+					</div>
 				</div>
 				<SelectInput
 					label={'Select Status'}
-					labelId="select-status"
-					onChange={(e) =>
-						changeValueHandler(e.target.value, 'status')
+					onChange={(val: string) =>
+						changeValueHandler(val, 'status')
 					}
 					value={taskMap.status}
-					sx={{ marginBottom: '1rem' }}
+					items={[
+						{ label: 'To-Do', value: 'Todo' },
+						{ label: 'Progress', value: 'Progress' },
+						{ label: 'Completed', value: 'Completed' },
+					]}
 				/>
-			</Modal>
-		</>
+			</div>
+		</Modal>
 	);
 };
 

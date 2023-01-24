@@ -7,14 +7,23 @@
 	text-align: left;
 }
 
+.inputs .input-container {
+	flex: 1;
+}
+
 .inputs button {
-	width: 400px;
+	width: 300px;
+	align-self: flex-end;
 }
 
 @media (max-width: 768px) {
 	.inputs {
 		flex-direction: column;
 		margin-top: 3rem;
+	}
+
+	.inputs .input-container {
+		width: 100%;
 	}
 
 	.inputs button {

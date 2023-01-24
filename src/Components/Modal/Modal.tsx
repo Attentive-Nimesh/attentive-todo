@@ -1,9 +1,6 @@
 import React, { ReactNode } from 'react';
-import ReactDOM from 'react-dom';
-import { Backdrop, Button } from '@mui/material';
+import { Modal as UIModal } from 'elysium-ui';
 import classes from './Modal.module.css';
-
-const portalEl = document.getElementById('modal-root');
 
 type ModalProps = {
 	headerText: string;
@@ -14,7 +11,7 @@ type ModalProps = {
 	onClick: () => void;
 };
 
-const OverLay = ({
+const Modal = ({
 	headerText,
 	buttonText,
 	onClose,
@@ -22,32 +19,29 @@ const OverLay = ({
 	children,
 	onClick,
 }: ModalProps) => {
+	const ctas = {
+		primary: {
+			label: buttonText,
+			color: 'primary',
+			onClick: onClick,
+		},
+		secondary: {
+			label: 'Cancel',
+			color: 'error',
+			onClick: onClose,
+			variant: 'outlined',
+		},
+	};
 	return (
-		<>
-			<Backdrop
-				open={show}
-				onClick={onClose}
-				sx={{ zIndex: () => 500 }}
-			/>
-			<div className={classes.modal}>
-				<header>
-					<h2>{headerText}</h2>
-				</header>
-				<main>{children}</main>
-				<footer className={classes.footer}>
-					<Button variant="outlined" onClick={onClose} color="error">
-						Cancel
-					</Button>
-					<Button variant="contained" onClick={onClick}>
-						{buttonText}
-					</Button>
-				</footer>
-			</div>
-		</>
+		<UIModal
+			maxWidth={'xl'}
+			ctas={ctas}
+			show={show}
+			onClose={onClose}
+			heading={headerText}
+			content={<main className={classes.main}>{children}</main>}
+		/>
 	);
 };
-
-const Modal = (props: ModalProps) =>
-	ReactDOM.createPortal(<OverLay {...props} />, portalEl as HTMLElement);
 
 export default Modal;

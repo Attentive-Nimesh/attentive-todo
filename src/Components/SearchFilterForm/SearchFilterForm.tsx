@@ -2,15 +2,14 @@ import React, { ChangeEvent } from 'react';
 import classes from './SearchFilterForm.module.css';
 import InputBox from '../Input/InputBox';
 import SelectInput from '../SelectInput/SelectInput';
-import { Button } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
+import { Button } from 'elysium-ui';
 
 type SearchFilterFormPropType = {
 	search: string;
 	filter: string;
 	setItems?: Set<string>;
 	onSearch: (e: ChangeEvent<HTMLInputElement>) => void;
-	onFilter: (e: SelectChangeEvent<string>) => void;
+	onFilter: (val: string) => void;
 	onClear: () => void;
 };
 const SearchFilterForm = ({
@@ -23,19 +22,23 @@ const SearchFilterForm = ({
 }: SearchFilterFormPropType) => {
 	return (
 		<div className={classes.inputs}>
-			<InputBox
-				label={'Search For Tasks'}
-				onChange={onSearch}
-				value={search}
-			/>
-			<SelectInput
-				label="Filter by Assignee"
-				filter={true}
-				onChange={onFilter}
-				value={filter}
-				setItems={setItems}
-			/>
-			<Button variant="contained" onClick={onClear}>
+			<div className={classes['input-container']}>
+				<InputBox
+					label={'Search For Tasks'}
+					onChange={onSearch}
+					value={search}
+				/>
+			</div>
+			<div className={classes['input-container']}>
+				<SelectInput
+					label="Filter by Assignee"
+					filter={true}
+					onChange={onFilter}
+					value={filter}
+					setItems={setItems}
+				/>
+			</div>
+			<Button onClick={onClear} size={'large'}>
 				Clear Filters
 			</Button>
 		</div>
