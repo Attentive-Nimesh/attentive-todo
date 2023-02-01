@@ -3,8 +3,20 @@ const Todos = require('./models');
 exports.getTodos = async (req, res) => {
 	const todos = await Todos.find().sort({ priority: 1, createdAt: -1 });
 	return res.status(200).json({
-		todos: todos.map((todo) => todo.toObject({ getters: true })),
+		todos: todos
+			.filter((todo) => !todo.isDeleted)
+			.map((todo) => todo.toObject({ getters: true })),
 		message: 'Successfully Fetched Todos',
+	});
+};
+
+exports.getDeletedTodos = async (req, res) => {
+	const todos = await Todos.find().sort({ priority: 1, createdAt: -1 });
+	return res.status(200).json({
+		todos: todos
+			.filter((todo) => todo.isDeleted)
+			.map((todo) => todo.toObject({ getters: true })),
+		message: 'Successfully Fetched Deleted Todos',
 	});
 };
 
