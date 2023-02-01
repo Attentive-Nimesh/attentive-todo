@@ -1,58 +1,58 @@
 import { useMutation, useQuery } from 'react-query';
 import { Todo } from '../Models/Todo';
-import { ToastType } from '../Pages/Board/Board';
-import { createToast, patchTodos, postTodos, getTodos } from '../utils/api';
+import { patchTodos, postTodos, getTodos } from '../utils/api';
 
 export const useEdit = (
-	fn: (data: ToastType) => void,
+	fn: (message: string, type: string) => void,
 	remainingFn: () => void
 ) =>
 	useMutation({
 		mutationFn: (data: Todo) => patchTodos(data),
 		onSuccess: () => {
-			fn(createToast('Successfully Edited', 'success'));
+			fn('Successfully Edited', 'success');
 			remainingFn();
 		},
-		onError: (err: Error) => fn(createToast(err.message)),
+		onError: (err: Error) => fn(err.message, 'error'),
 	});
 
 export const useCreate = (
-	fn: (data: ToastType) => void,
+	fn: (message: string, type: string) => void,
 	remainingFn: () => void
 ) =>
 	useMutation({
 		mutationFn: (data: Todo) => postTodos(data),
 		onSuccess: () => {
-			fn(createToast('Successfully Created', 'success'));
+			fn('Successfully Created', 'success');
 			remainingFn();
 		},
-		onError: (err: Error) => fn(createToast(err.message)),
+		onError: (err: Error) => fn(err.message, 'error'),
 	});
 
 export const useDelete = (
-	fn: (data: ToastType) => void,
+	fn: (message: string, type: string) => void,
 	remainingFn: () => void
 ) =>
 	useMutation({
 		mutationFn: (data: string) => patchTodos(data, true),
 		onSuccess: () => {
-			fn(createToast('Successfully Deleted', 'success'));
+			fn('Successfully Deleted', 'success');
 			remainingFn();
 		},
-		onError: (err: Error) => fn(createToast(err.message)),
+		onError: (err: Error) => fn(err.message, 'error'),
 	});
 
 export const useFetch = (
-	fn?: (data: ToastType) => void,
+	isDeleted: boolean,
+	fn: (message: string, type: string) => void,
 	successfn?: (data: Todo[]) => void
 ) =>
 	useQuery({
-		queryKey: ['todos'],
-		queryFn: getTodos,
+		queryKey: isDeleted ? ['todos'] : ['deleted-todos'],
+		queryFn: () => getTodos(isDeleted),
 		onSuccess: (data) => {
 			if (successfn) successfn(data);
 		},
 		onError: (err: Error) => {
-			if (fn) fn(createToast(err.message));
+			if (fn) fn(err.message, 'error');
 		},
 	});

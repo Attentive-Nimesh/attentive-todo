@@ -5,10 +5,11 @@ import classes from './TaskItems.module.css';
 import { TasksProps } from '../Tasks/Tasks';
 import { Todo } from '../../Models/Todo';
 import { useEdit } from '../../hooks/useApi';
+import { showToast } from 'elysium-ui';
 
-const TaskItems = ({ tasks, status, showNotification }: TasksProps) => {
+const TaskItems = ({ tasks, status }: TasksProps) => {
 	const queryClient = useQueryClient();
-	const editQuery = useEdit(showNotification, () =>
+	const editQuery = useEdit(showToast, () =>
 		queryClient.invalidateQueries({ queryKey: ['todos'] })
 	);
 	const [dragOverClasses, setDragOverClasses] = useState(false);
@@ -44,13 +45,7 @@ const TaskItems = ({ tasks, status, showNotification }: TasksProps) => {
 			onDrop={onDropHandler}
 		>
 			{tasks.length > 0 &&
-				tasks.map((data) => (
-					<TaskItem
-						showNotification={showNotification}
-						key={data.id}
-						task={data}
-					/>
-				))}
+				tasks.map((data) => <TaskItem key={data.id} task={data} />)}
 			{tasks.length === 0 && <p>No {status} Tasks</p>}
 		</ul>
 	);

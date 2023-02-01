@@ -3,23 +3,17 @@ import InputBox from '../Input/InputBox';
 import SelectInput from '../SelectInput/SelectInput';
 import Modal from '../Modal/Modal';
 import { Todo } from '../../Models/Todo';
-import { ToastType } from '../../Pages/Board/Board';
 import { useQueryClient } from 'react-query';
 import { useCreate, useEdit } from '../../hooks/useApi';
+import { showToast } from 'elysium-ui';
 
 type TaskFormPropType = {
 	show: boolean;
 	onToggle: () => void;
 	task?: Todo;
-	showNotification: (data: ToastType) => void;
 };
 
-const TaskForm = ({
-	show,
-	onToggle,
-	task,
-	showNotification,
-}: TaskFormPropType) => {
+const TaskForm = ({ show, onToggle, task }: TaskFormPropType) => {
 	const [taskMap, setTaskMap] = useState({
 		task: task ? task.task : '',
 		assignee: task ? task.assignee : '',
@@ -32,12 +26,12 @@ const TaskForm = ({
 
 	const queryClient = useQueryClient();
 
-	const createQuery = useCreate(showNotification, () => {
+	const createQuery = useCreate(showToast, () => {
 		queryClient.invalidateQueries({ queryKey: ['todos'] });
 		onToggle();
 	});
 
-	const editQuery = useEdit(showNotification, () => {
+	const editQuery = useEdit(showToast, () => {
 		queryClient.invalidateQueries({ queryKey: ['todos'] });
 		onToggle();
 	});
@@ -75,6 +69,7 @@ const TaskForm = ({
 					label={'Write a task'}
 					onChange={(e) => changeValueHandler(e.target.value, 'task')}
 					value={taskMap.task}
+					placeholder={'Task'}
 				/>
 				<SelectInput
 					label="Priority"
@@ -93,6 +88,7 @@ const TaskForm = ({
 						changeValueHandler(e.target.value, 'assignee')
 					}
 					value={taskMap.assignee}
+					placeholder={'Assignee'}
 				/>
 				<div className="flex-box">
 					<div className="input-container">

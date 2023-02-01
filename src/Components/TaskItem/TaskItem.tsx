@@ -2,19 +2,17 @@ import React, { useState, DragEvent } from 'react';
 import { useQueryClient } from 'react-query';
 import classes from './TaskItem.module.css';
 
-import { EditIconFilled, DeleteIcon } from 'elysium-ui';
+import { EditIconFilled, DeleteIcon, showToast } from 'elysium-ui';
 import Modal from '../Modal/Modal';
 import TaskForm from '../CreateTaskForm/TaskForm';
 import { Todo } from '../../Models/Todo';
-import { ToastType } from '../../Pages/Board/Board';
 import { useDelete } from '../../hooks/useApi';
 
 type TaskItemProp = {
 	task: Todo;
-	showNotification: (data: ToastType) => void;
 };
 
-const TaskItem = ({ task, showNotification }: TaskItemProp) => {
+const TaskItem = ({ task }: TaskItemProp) => {
 	const [editModal, setEditModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [dragClass, setDragClass] = useState(false);
@@ -23,7 +21,7 @@ const TaskItem = ({ task, showNotification }: TaskItemProp) => {
 	const toggleEditModal = () => setEditModal((prev) => !prev);
 	const toggleDeleteModal = () => setDeleteModal((prev) => !prev);
 
-	const deleteQuery = useDelete(showNotification, () => {
+	const deleteQuery = useDelete(showToast, () => {
 		queryClient.invalidateQueries({ queryKey: ['todos'] });
 		toggleDeleteModal();
 	});
@@ -48,7 +46,6 @@ const TaskItem = ({ task, showNotification }: TaskItemProp) => {
 					show={editModal}
 					onToggle={toggleEditModal}
 					task={task}
-					showNotification={showNotification}
 				/>
 			)}
 			{deleteModal && (

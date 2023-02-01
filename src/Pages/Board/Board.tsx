@@ -1,11 +1,9 @@
 import React, { useState, ChangeEvent, useCallback } from 'react';
-import { Button } from 'elysium-ui';
+import { Button, showToast, Toast } from 'elysium-ui';
 import classes from './Board.module.css';
 import Tasks from '../../Components/Tasks/Tasks';
 import TaskForm from '../../Components/CreateTaskForm/TaskForm';
 import SearchFilterForm from '../../Components/SearchFilterForm/SearchFilterForm';
-import Toast from '../../Components/Toast/Toast';
-import { createToast } from '../../utils/api';
 import Loader from '../../Components/Loader/Loader';
 import { useFetch } from '../../hooks/useApi';
 
@@ -21,19 +19,11 @@ enum TASKS_STATUS {
 }
 
 const Board = () => {
-	const [toast, setToast] = useState<ToastType>({
-		type: 'error',
-		message: '',
-	});
 	const [filter, setFilter] = useState('');
 	const [showModal, setShowModal] = useState(false);
 	const [search, setSearch] = useState('');
 
-	const handleNotification = useCallback(
-		(data: ToastType) => setToast(data),
-		[]
-	);
-	const { data: tasks, isLoading } = useFetch(handleNotification);
+	const { data: tasks, isLoading } = useFetch(false, showToast);
 
 	const changeFilter = useCallback((val: string) => {
 		setFilter(val);
@@ -49,18 +39,18 @@ const Board = () => {
 
 	const toggleModal = useCallback(() => setShowModal((prev) => !prev), []);
 
-	const toggleToast = useCallback(() => setToast(createToast('')), []);
-
 	return (
 		<>
-			{toast.message && <Toast {...toast} onClose={toggleToast} />}
-			{showModal && (
-				<TaskForm
-					show={showModal}
-					onToggle={toggleModal}
-					showNotification={handleNotification}
-				/>
-			)}
+			<Toast
+				newestOnTop={false}
+				limit={1}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
+			{showModal && <TaskForm show={showModal} onToggle={toggleModal} />}
 			<div className={classes['board-container']}>
 				<Button onClick={toggleModal} size="large">
 					Create Task
@@ -95,7 +85,6 @@ const Board = () => {
 													(task) =>
 														task.status ===
 															status &&
-														!task.isDeleted &&
 														task.task
 															.toLowerCase()
 															.includes(
@@ -107,7 +96,6 @@ const Board = () => {
 													(task) =>
 														task.status ===
 															status &&
-														!task.isDeleted &&
 														task.task
 															.toLowerCase()
 															.includes(
@@ -116,7 +104,6 @@ const Board = () => {
 											  )
 										: []
 								}
-								showNotification={handleNotification}
 							/>
 						))}
 					</div>

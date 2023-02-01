@@ -7,10 +7,10 @@ import { Button } from 'elysium-ui';
 type SearchFilterFormPropType = {
 	search: string;
 	filter: string;
-	setItems?: Set<string>;
 	onSearch: (e: ChangeEvent<HTMLInputElement>) => void;
 	onFilter: (val: string) => void;
 	onClear: () => void;
+	setItems?: Set<string>;
 };
 const SearchFilterForm = ({
 	onSearch,
@@ -27,6 +27,7 @@ const SearchFilterForm = ({
 					label={'Search For Tasks'}
 					onChange={onSearch}
 					value={search}
+					placeholder={'🔍Search Here'}
 				/>
 			</div>
 			<div className={classes['input-container']}>

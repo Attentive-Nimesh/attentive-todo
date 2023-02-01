@@ -19,8 +19,12 @@ export const createToast = (
 	message,
 });
 
-export const getTodos = async () => {
-	const response = await axios.get('http://localhost:8080/todos');
+export const getTodos = async (isDeleted = false) => {
+	let url = 'http://localhost:8080/todos';
+	if (isDeleted) {
+		url = 'http://localhost:8080/todos/deleted';
+	}
+	const response = await axios.get(url);
 
 	if (response.status !== 200) {
 		throw new Error('Not Fetched Properly');
